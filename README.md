@@ -1,1 +1,1 @@
-# ImageEncryptCompress
+# Image Manipulator
