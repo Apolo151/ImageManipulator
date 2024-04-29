@@ -9,6 +9,11 @@ using PriorityQueues;
 
 namespace ImageEncryptCompress
 {
+    public struct Pixel{
+        
+       public byte value;
+       public int frequency;
+    };
     public class Compression
     {
         // frequency maps for each image channel
@@ -16,13 +21,14 @@ namespace ImageEncryptCompress
         public static Dictionary<byte, int> greenFrequency = new Dictionary<byte, int>();
         public static Dictionary<byte, int> blueFrequency = new Dictionary<byte, int>();
         //
-        public static PriorityQueues.BinaryPriorityQueue<int> pqRed = new 
-            BinaryPriorityQueue<int>((a, b) => a.CompareTo(b));
-        public static PriorityQueues.BinaryPriorityQueue<int> pqGreen = new
-            BinaryPriorityQueue<int>((a, b) => a.CompareTo(b));
-        public static PriorityQueues.BinaryPriorityQueue<int> pqBlue = new
-            BinaryPriorityQueue<int>((a, b) => a.CompareTo(b));
+        public static BinaryPriorityQueue<Pixel> pqRed = new 
+            BinaryPriorityQueue<Pixel>((a, b) => a.frequency.CompareTo(b.frequency));
+        public static BinaryPriorityQueue<Pixel> pqGreen = new
+            BinaryPriorityQueue<Pixel>((a, b) => a.frequency.CompareTo(b.frequency));
+        public static BinaryPriorityQueue<Pixel> pqBlue = new
+            BinaryPriorityQueue<Pixel>((a, b) => a.frequency.CompareTo(b.frequency));
 
+        
         /// <summary>
         /// Compress the image's 2D color array using huffman encoding
         /// </summary>
@@ -82,10 +88,32 @@ namespace ImageEncryptCompress
             }
             return;
         }
-        
+
         private static void ConstructHuffmanTree(RGBPixel[,] image)
         {
-            // 
+            int height = ImageOperations.GetHeight(image);
+            int width = ImageOperations.GetWidth(image);
+            Pixel temp;
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    temp.value = image[i, j].red;
+                    temp.frequency = redFrequency[image[i, j].red];
+                    pqRed.Enqueue(temp);
+                    temp.value = image[i, j].green;
+                    temp.frequency = greenFrequency[image[i, j].green];
+                    pqRed.Enqueue(temp);
+                    temp.value = image[i, j].blue;
+                    temp.frequency = blueFrequency[image[i, j].blue];
+                    pqRed.Enqueue(temp);
+                }
+            }
+            
+            /*while(pqRed.Count > 1)
+            {
+
+            }*/
         }
     }
 }
