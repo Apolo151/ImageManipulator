@@ -92,7 +92,12 @@ namespace ImageEncryptCompress
 
             return Buffer;
         }
-        
+
+        public static void SaveBinaryImage(string filePath, RGBPixel[,] ImageMatrix)
+        {
+            // TODO: Implement
+        }
+
         /// <summary>
         /// Get the height of the image 
         /// </summary>

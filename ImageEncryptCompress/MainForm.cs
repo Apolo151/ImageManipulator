@@ -36,6 +36,7 @@ namespace ImageEncryptCompress
             double sigma = double.Parse(txtGaussSigma.Text);
             int maskSize = (int)nudMaskSize.Value ;
             ImageMatrix = ImageOperations.GaussianFilter1D(ImageMatrix, maskSize, sigma);
+            Compression.CompressImage(ImageMatrix);
             ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
         }
 
