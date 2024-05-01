@@ -118,40 +118,61 @@ namespace ImageEncryptCompress
             }
             return;
         }
-
+        public static RGBPixel[,] createCompressedImage(RGBPixel[,] image)
+        {
+            // TODO: Implement
+            return null;
+        }
     }
     public class HuffmanTree
     {
-        static TreeNode node1;
-        static TreeNode node2;
-        static TreeNode sum;
-        int size, left, right;
-        static byte key = Convert.ToByte(256);
-        public static Dictionary<Pixel, Tuple<TreeNode,TreeNode>> nodesPointers = new Dictionary<Pixel, Tuple<TreeNode,TreeNode>>();
+        static byte newPixelKey = Convert.ToByte(256);
+        public static Dictionary<Pixel, Tuple<Pixel, Pixel>> treeMap = new Dictionary<Pixel, Tuple<Pixel, Pixel>>();
+        public static Dictionary<Pixel, byte> pixelCodes = new Dictionary<Pixel, byte>();
+        public static Pixel rootPixel;
+        //
         public static void BuildTree(RGBPixel[,] image)
         {
-            Compression.ConstructQueue(image);
+            Pixel leftPixel;
+            Pixel rightPixel;
+            Pixel sumPixel;
+            //
+            Compression.ConstructQueue(image);            
             while (Compression.pqRed.Count > 1)
             {
-                if (nodesPointers[Compression.pqRed.Peek()].Equals(null))
-                {
-                    node1.data = Compression.pqRed.Peek();
-                }
-                Compression.pqRed.Dequeue();
-                if (nodesPointers[Compression.pqRed.Peek()].Equals(null))
-                {
-                    node2.data = Compression.pqRed.Peek();
-                }
-                Compression.pqRed.Dequeue();
-                unsafe
-                {
-                    sum.data.frequency = node1.data.frequency + node2.data.frequency;
-                    sum.data.value = key++;
-                    Tuple<TreeNode, TreeNode> temp = new Tuple<TreeNode, TreeNode>(node1, node2);
-                    nodesPointers[sum.data] = temp; 
-                }
+                // Get the lowest two
+                leftPixel = Compression.pqRed.Dequeue();
+                rightPixel = Compression.pqRed.Dequeue();
+                // create new node with their sum
+                sumPixel.frequency = leftPixel.frequency + rightPixel.frequency;
+                sumPixel.value = newPixelKey;
+                newPixelKey++;
+                // add new map entry
+                treeMap.Add(sumPixel, new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
+                // add new node to priority queue
+                Compression.pqRed.Enqueue(sumPixel);
             }
+            rootPixel = Compression.pqRed.Dequeue();
+        }
+        //
+        public static void traverseTree(Pixel key, int bit, byte currentCode)
+        {
+            // add bit to currentCode (recheck)
+            currentCode++;
+            // base: if key is doesn't have a value -> node is a leaf node
+            if (treeMap.ContainsKey(key) == false)
+            {
+                pixelCodes[key] = currentCode;
+                return;
+            }
+            // shift currentCode
+            var shifted = currentCode << 1;
+            currentCode = Convert.ToByte(shifted);
+            // recurse
+            traverseTree(treeMap[key].Item1, 0, currentCode);
+            traverseTree(treeMap[key].Item2, 1, currentCode);
+            return;
+
         }
     }
-
 }
