@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using PriorityQueues;
 
 // Used priority queue implementation: https://github.com/mikkul/PriorityQueue/tree/master
@@ -13,6 +14,12 @@ namespace ImageEncryptCompress
         
        public byte value;
        public int frequency;
+    };
+    public unsafe struct TreeNode
+    {
+         public Pixel data;
+         public TreeNode* left;
+         public TreeNode* right;
     };
     public class Compression
     {
@@ -89,7 +96,7 @@ namespace ImageEncryptCompress
             return;
         }
 
-        private static void ConstructHuffmanTree(RGBPixel[,] image)
+        public static void ConstructQueue(RGBPixel[,] image)
         {
             int height = ImageOperations.GetHeight(image);
             int width = ImageOperations.GetWidth(image);
@@ -109,11 +116,42 @@ namespace ImageEncryptCompress
                     pqRed.Enqueue(temp);
                 }
             }
-            
-            /*while(pqRed.Count > 1)
-            {
+            return;
+        }
 
-            }*/
+    }
+    public class HuffmanTree
+    {
+        static TreeNode node1;
+        static TreeNode node2;
+        static TreeNode sum;
+        int size, left, right;
+        static byte key = Convert.ToByte(256);
+        public static Dictionary<Pixel, Tuple<TreeNode,TreeNode>> nodesPointers = new Dictionary<Pixel, Tuple<TreeNode,TreeNode>>();
+        public static void BuildTree(RGBPixel[,] image)
+        {
+            Compression.ConstructQueue(image);
+            while (Compression.pqRed.Count > 1)
+            {
+                if (nodesPointers[Compression.pqRed.Peek()].Equals(null))
+                {
+                    node1.data = Compression.pqRed.Peek();
+                }
+                Compression.pqRed.Dequeue();
+                if (nodesPointers[Compression.pqRed.Peek()].Equals(null))
+                {
+                    node2.data = Compression.pqRed.Peek();
+                }
+                Compression.pqRed.Dequeue();
+                unsafe
+                {
+                    sum.data.frequency = node1.data.frequency + node2.data.frequency;
+                    sum.data.value = key++;
+                    Tuple<TreeNode, TreeNode> temp = new Tuple<TreeNode, TreeNode>(node1, node2);
+                    nodesPointers[sum.data] = temp; 
+                }
+            }
         }
     }
+
 }
