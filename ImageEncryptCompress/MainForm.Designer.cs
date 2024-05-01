@@ -31,6 +31,7 @@ namespace ImageEncryptCompress
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.btnOpen = new System.Windows.Forms.Button();
+            this.btnCompress = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.btnGaussSmooth = new System.Windows.Forms.Button();
@@ -82,6 +83,18 @@ namespace ImageEncryptCompress
             this.btnOpen.Text = "Open Image";
             this.btnOpen.UseVisualStyleBackColor = true;
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
+            //
+            // btnCompress
+            //
+            this.btnCompress.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCompress.Location = new System.Drawing.Point(100, 513);
+            this.btnCompress.Margin = new System.Windows.Forms.Padding(4);
+            this.btnCompress.Name = "btnCompress";
+            this.btnCompress.Size = new System.Drawing.Size(130, 89);
+            this.btnCompress.TabIndex = 2;
+            this.btnCompress.Text = "Compress Image";
+            this.btnCompress.UseVisualStyleBackColor = true;
+            this.btnCompress.Click += new System.EventHandler(this.btnCompress_Click);
             // 
             // label1
             // 
@@ -259,6 +272,7 @@ namespace ImageEncryptCompress
             this.Controls.Add(this.txtHeight);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btnGaussSmooth);
+            this.Controls.Add(this.btnCompress);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnOpen);
@@ -285,6 +299,9 @@ namespace ImageEncryptCompress
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnGaussSmooth;
+        private System.Windows.Forms.Button btnCompress;
+        private System.Windows.Forms.Button btnEncrypt;
+        private System.Windows.Forms.Button btnDecrypt;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtHeight;
