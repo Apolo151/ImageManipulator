@@ -15,12 +15,7 @@ namespace ImageEncryptCompress
        public byte value;
        public int frequency;
     };
-    public unsafe struct TreeNode
-    {
-         public Pixel data;
-         public TreeNode* left;
-         public TreeNode* right;
-    };
+
     public class Compression
     {
         // frequency maps for each image channel
@@ -41,15 +36,25 @@ namespace ImageEncryptCompress
         /// </summary>
         /// <param name="image"> the 2d image array</param>
         /// <returns>2D array of colors </returns>
-        public static RGBPixel[,] CompressImage(RGBPixel[,] image)
+        public static void CompressImage(RGBPixel[,] image)
         {
             //TODO
             // Calculate freq for each pixel
             CalculatePixelsFrequency(image);
-            //
+            // Fill Priority queue to use for tree building
+            FillPQueues(image);
+            // Build Huffman Tree
+            HuffmanTree.BuildTree(image);
+            // Create code for each pixel pixel
+            byte b = Convert.ToByte(0);
+            HuffmanTree.traverseTree(HuffmanTree.rootPixel, 0, b);
+            HuffmanTree.traverseTree(HuffmanTree.rootPixel, 1, b);
+            // replace each pixel value with its code in the compressed image
+            
+            // save compressed image
 
             //
-            return null;
+            return;
         }
 
         /// <summary>
@@ -96,7 +101,7 @@ namespace ImageEncryptCompress
             return;
         }
 
-        public static void ConstructQueue(RGBPixel[,] image)
+        public static void FillPQueues(RGBPixel[,] image)
         {
             int height = ImageOperations.GetHeight(image);
             int width = ImageOperations.GetWidth(image);
@@ -122,57 +127,6 @@ namespace ImageEncryptCompress
         {
             // TODO: Implement
             return null;
-        }
-    }
-    public class HuffmanTree
-    {
-        static byte newPixelKey = Convert.ToByte(256);
-        public static Dictionary<Pixel, Tuple<Pixel, Pixel>> treeMap = new Dictionary<Pixel, Tuple<Pixel, Pixel>>();
-        public static Dictionary<Pixel, byte> pixelCodes = new Dictionary<Pixel, byte>();
-        public static Pixel rootPixel;
-        //
-        public static void BuildTree(RGBPixel[,] image)
-        {
-            Pixel leftPixel;
-            Pixel rightPixel;
-            Pixel sumPixel;
-            //
-            Compression.ConstructQueue(image);            
-            while (Compression.pqRed.Count > 1)
-            {
-                // Get the lowest two
-                leftPixel = Compression.pqRed.Dequeue();
-                rightPixel = Compression.pqRed.Dequeue();
-                // create new node with their sum
-                sumPixel.frequency = leftPixel.frequency + rightPixel.frequency;
-                sumPixel.value = newPixelKey;
-                newPixelKey++;
-                // add new map entry
-                treeMap.Add(sumPixel, new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
-                // add new node to priority queue
-                Compression.pqRed.Enqueue(sumPixel);
-            }
-            rootPixel = Compression.pqRed.Dequeue();
-        }
-        //
-        public static void traverseTree(Pixel key, int bit, byte currentCode)
-        {
-            // add bit to currentCode (recheck)
-            currentCode++;
-            // base: if key is doesn't have a value -> node is a leaf node
-            if (treeMap.ContainsKey(key) == false)
-            {
-                pixelCodes[key] = currentCode;
-                return;
-            }
-            // shift currentCode
-            var shifted = currentCode << 1;
-            currentCode = Convert.ToByte(shifted);
-            // recurse
-            traverseTree(treeMap[key].Item1, 0, currentCode);
-            traverseTree(treeMap[key].Item2, 1, currentCode);
-            return;
-
         }
     }
 }
