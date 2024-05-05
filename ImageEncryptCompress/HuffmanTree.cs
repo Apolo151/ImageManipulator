@@ -10,7 +10,7 @@ namespace ImageEncryptCompress
     {
         public static int nodeKeys = 256; // generate keys for middle nodes
         public static Dictionary<int, Tuple<Pixel, Pixel>> treeMap = new Dictionary<int, Tuple<Pixel, Pixel>>();
-        public static Dictionary<Pixel, byte> pixelCodes = new Dictionary<Pixel, byte>();
+        public static Dictionary<Pixel, string> pixelCodes = new Dictionary<Pixel, string>();
         public static Pixel rootPixel = new Pixel();
 
 
@@ -44,11 +44,11 @@ namespace ImageEncryptCompress
             return;
         }
         //
-        public static void traverseTree(Pixel pixel, int bit, byte currentCode)
+        public static void traverseTree(Pixel pixel,string currentCode)
         {
             // add bit to currentCode (recheck)
-            if (bit == 1)
-                currentCode++;
+           /* if (bit == 1)
+                currentCode++;*/
             // base: if key is doesn't have a value -> node is a leaf node
             if (treeMap.ContainsKey(pixel.value) == false)
             {
@@ -56,11 +56,11 @@ namespace ImageEncryptCompress
                 return;
             }
             // shift currentCode
-            var shifted = currentCode << 1;
-            currentCode = Convert.ToByte(shifted);
+           /* var shifted = currentCode << 1;
+            currentCode = Convert.ToByte(shifted);*/
             // recurse
-            traverseTree(treeMap[pixel.value].Item1, 0, currentCode);
-            traverseTree(treeMap[pixel.value].Item2, 1, currentCode);
+            traverseTree(treeMap[pixel.value].Item1,currentCode+'0');
+            traverseTree(treeMap[pixel.value].Item2,currentCode+'1');
             return;
         }
         //

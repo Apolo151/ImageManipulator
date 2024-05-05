@@ -46,9 +46,9 @@ namespace ImageEncryptCompress
             // Build Huffman Tree
             HuffmanTree.BuildTree(image);
             // Create code for each pixel pixel
-            byte b = Convert.ToByte(0);
-            HuffmanTree.traverseTree(HuffmanTree.rootPixel, 0, b);
-            HuffmanTree.traverseTree(HuffmanTree.rootPixel, 1, b);
+            string currentCode = "";
+            HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode + '0');
+            HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode + '1');
             // replace each pixel value with its code in the compressed image
             
             // save compressed image
