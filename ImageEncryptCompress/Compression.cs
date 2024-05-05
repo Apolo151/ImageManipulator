@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using PriorityQueues;
+using System.IO;
 
 // Used priority queue implementation: https://github.com/mikkul/PriorityQueue/tree/master
 
@@ -123,12 +126,7 @@ namespace ImageEncryptCompress
             }
             return;
         }
-        public static RGBPixel[,] createCompressedImage(RGBPixel[,] image)
-        {
-            // TODO: Implement
-            return null;
-        }
-        public static void saveCompressedImage(RGBPixel[,] image ,Dictionary<Pixel, string> pixelCodes)
+        public static byte[] createCompressedImage(RGBPixel[,] image ,Dictionary<Pixel, string> pixelCodes)
         {
             Pixel pixel;
             List<bool> compressedImageBits = new List<bool>();
@@ -156,22 +154,31 @@ namespace ImageEncryptCompress
                 compressedImageBits.Add(false);
                 padding--;
             }
+
             byte[] compressedImage = new byte[compressedImageBits.Count/8];
+            //looping over 8 bits at once to construct compressed image bytes
             for (int i = 0; i < compressedImageBits.Count; i += 8)
             {
                 byte b = 0;
+                //looping over each bit in the byte
                 for (int j = 0; j < 8; j++)
                 {
+                    //check if bit isn't out of bound and if it's 1 or 0
                     if (i + j < compressedImageBits.Count && compressedImageBits[i + j])
                     {
+                        //assign each bit to its right place in the byte using bitwise OR
                         b |= (byte)(1 << (7 - j));
                     }
                 }
+                //saving bytes
                 compressedImage[i / 8] = b;
             }
-
-            return;
+            //returns list of bytes which represents the compressed image
+            return compressedImage;
         }
-
+        public static void saveCompressedImage(byte[] compressedImage, string filePath)
+        {
+            File.WriteAllBytes(filePath, compressedImage);
+        }
     }
 }
