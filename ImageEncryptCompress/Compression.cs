@@ -105,20 +105,20 @@ namespace ImageEncryptCompress
         {
             int height = ImageOperations.GetHeight(image);
             int width = ImageOperations.GetWidth(image);
-            Pixel temp;
+            Pixel pixel;
             for (int i = 0; i < height; i++)
             {
                 for (int j = 0; j < width; j++)
                 {
-                    temp.value = image[i, j].red;
-                    temp.frequency = redFrequency[image[i, j].red];
-                    pqRed.Enqueue(temp);
-                    temp.value = image[i, j].green;
-                    temp.frequency = greenFrequency[image[i, j].green];
-                    pqRed.Enqueue(temp);
-                    temp.value = image[i, j].blue;
-                    temp.frequency = blueFrequency[image[i, j].blue];
-                    pqRed.Enqueue(temp);
+                    pixel.value = image[i, j].red;
+                    pixel.frequency = redFrequency[image[i, j].red];
+                    pqRed.Enqueue(pixel);
+                    pixel.value = image[i, j].green;
+                    pixel.frequency = greenFrequency[image[i, j].green];
+                    pqRed.Enqueue(pixel);
+                    pixel.value = image[i, j].blue;
+                    pixel.frequency = blueFrequency[image[i, j].blue];
+                    pqRed.Enqueue(pixel);
                 }
             }
             return;
@@ -128,5 +128,50 @@ namespace ImageEncryptCompress
             // TODO: Implement
             return null;
         }
+        public static void saveCompressedImage(RGBPixel[,] image ,Dictionary<Pixel, string> pixelCodes)
+        {
+            Pixel pixel;
+            List<bool> compressedImageBits = new List<bool>();
+            int height = ImageOperations.GetHeight(image);
+            int width = ImageOperations.GetWidth(image);
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    pixel.value = image[i, j].red;
+                    pixel.frequency = redFrequency[image[i, j].red];
+
+                    //adding every huffman code bit to compressedImageBits list
+                    foreach (char bit in pixelCodes[pixel])
+                    {
+                        compressedImageBits.Add(bit == '1');
+                    }
+                }
+            }
+            //Turning bits to bytes to be able to save in binary files
+            //Add padding to ensure number of bits are divisible by 8
+            int padding = (8-(compressedImageBits.Count % 8))%8;
+            while(padding > 0)
+            {
+                compressedImageBits.Add(false);
+                padding--;
+            }
+            byte[] compressedImage = new byte[compressedImageBits.Count/8];
+            for (int i = 0; i < compressedImageBits.Count; i += 8)
+            {
+                byte b = 0;
+                for (int j = 0; j < 8; j++)
+                {
+                    if (i + j < compressedImageBits.Count && compressedImageBits[i + j])
+                    {
+                        b |= (byte)(1 << (7 - j));
+                    }
+                }
+                compressedImage[i / 8] = b;
+            }
+
+            return;
+        }
+
     }
 }
