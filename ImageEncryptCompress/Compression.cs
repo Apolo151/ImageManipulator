@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using PriorityQueues;
+using System.IO;
 
 // Used priority queue implementation: https://github.com/mikkul/PriorityQueue/tree/master
 
@@ -46,9 +49,9 @@ namespace ImageEncryptCompress
             // Build Huffman Tree
             HuffmanTree.BuildTree(image);
             // Create code for each pixel pixel
-            byte b = Convert.ToByte(0);
-            HuffmanTree.traverseTree(HuffmanTree.rootPixel, 0, b);
-            HuffmanTree.traverseTree(HuffmanTree.rootPixel, 1, b);
+            string currentCode = "";
+            HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode + '0');
+            HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode + '1');
             // replace each pixel value with its code in the compressed image
             
             // save compressed image
@@ -105,28 +108,77 @@ namespace ImageEncryptCompress
         {
             int height = ImageOperations.GetHeight(image);
             int width = ImageOperations.GetWidth(image);
-            Pixel temp;
+            Pixel pixel;
             for (int i = 0; i < height; i++)
             {
                 for (int j = 0; j < width; j++)
                 {
-                    temp.value = image[i, j].red;
-                    temp.frequency = redFrequency[image[i, j].red];
-                    pqRed.Enqueue(temp);
-                    temp.value = image[i, j].green;
-                    temp.frequency = greenFrequency[image[i, j].green];
-                    pqRed.Enqueue(temp);
-                    temp.value = image[i, j].blue;
-                    temp.frequency = blueFrequency[image[i, j].blue];
-                    pqRed.Enqueue(temp);
+                    pixel.value = image[i, j].red;
+                    pixel.frequency = redFrequency[image[i, j].red];
+                    pqRed.Enqueue(pixel);
+                    pixel.value = image[i, j].green;
+                    pixel.frequency = greenFrequency[image[i, j].green];
+                    pqRed.Enqueue(pixel);
+                    pixel.value = image[i, j].blue;
+                    pixel.frequency = blueFrequency[image[i, j].blue];
+                    pqRed.Enqueue(pixel);
                 }
             }
             return;
         }
-        public static RGBPixel[,] createCompressedImage(RGBPixel[,] image)
+        public static byte[] createCompressedImage(RGBPixel[,] image ,Dictionary<Pixel, string> pixelCodes)
         {
-            // TODO: Implement
-            return null;
+            Pixel pixel;
+            List<bool> compressedImageBits = new List<bool>();
+            int height = ImageOperations.GetHeight(image);
+            int width = ImageOperations.GetWidth(image);
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    pixel.value = image[i, j].red;
+                    pixel.frequency = redFrequency[image[i, j].red];
+
+                    //adding every huffman code bit to compressedImageBits list
+                    foreach (char bit in pixelCodes[pixel])
+                    {
+                        compressedImageBits.Add(bit == '1');
+                    }
+                }
+            }
+            //Turning bits to bytes to be able to save in binary files
+            //Add padding to ensure number of bits are divisible by 8
+            int padding = (8-(compressedImageBits.Count % 8))%8;
+            while(padding > 0)
+            {
+                compressedImageBits.Add(false);
+                padding--;
+            }
+
+            byte[] compressedImage = new byte[compressedImageBits.Count/8];
+            //looping over 8 bits at once to construct compressed image bytes
+            for (int i = 0; i < compressedImageBits.Count; i += 8)
+            {
+                byte b = 0;
+                //looping over each bit in the byte
+                for (int j = 0; j < 8; j++)
+                {
+                    //check if bit isn't out of bound and if it's 1 or 0
+                    if (i + j < compressedImageBits.Count && compressedImageBits[i + j])
+                    {
+                        //assign each bit to its right place in the byte using bitwise OR
+                        b |= (byte)(1 << (7 - j));
+                    }
+                }
+                //saving bytes
+                compressedImage[i / 8] = b;
+            }
+            //returns list of bytes which represents the compressed image
+            return compressedImage;
+        }
+        public static void saveCompressedImage(byte[] compressedImage, string filePath)
+        {
+            File.WriteAllBytes(filePath, compressedImage);
         }
     }
 }
