@@ -21,6 +21,8 @@ namespace ImageEncryptCompress
 
     public class Compression
     {
+        // compressed image file path
+        public static string filePath = "./compressionTests/results/res1.txt";
         // frequency maps for each image channel
         public static Dictionary<byte, int> redFrequency = new Dictionary<byte, int>();
         public static Dictionary<byte, int> greenFrequency = new Dictionary<byte, int>();
@@ -53,9 +55,9 @@ namespace ImageEncryptCompress
             HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode + '0');
             HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode + '1');
             // replace each pixel value with its code in the compressed image
-            
+            byte[] compressedImage = createCompressedImage(image, HuffmanTree.pixelCodes);
             // save compressed image
-
+            saveCompressedImage(compressedImage, filePath);
             //
             return;
         }
@@ -109,21 +111,13 @@ namespace ImageEncryptCompress
             int height = ImageOperations.GetHeight(image);
             int width = ImageOperations.GetWidth(image);
             Pixel pixel;
-            for (int i = 0; i < height; i++)
+            foreach(var pair in redFrequency)
             {
-                for (int j = 0; j < width; j++)
-                {
-                    pixel.value = image[i, j].red;
-                    pixel.frequency = redFrequency[image[i, j].red];
-                    pqRed.Enqueue(pixel);
-                    pixel.value = image[i, j].green;
-                    pixel.frequency = greenFrequency[image[i, j].green];
-                    pqRed.Enqueue(pixel);
-                    pixel.value = image[i, j].blue;
-                    pixel.frequency = blueFrequency[image[i, j].blue];
-                    pqRed.Enqueue(pixel);
-                }
+                pixel.value = pair.Key;
+                pixel.frequency = pair.Value;
+                pqRed.Enqueue(pixel);
             }
+
             return;
         }
         public static byte[] createCompressedImage(RGBPixel[,] image ,Dictionary<Pixel, string> pixelCodes)

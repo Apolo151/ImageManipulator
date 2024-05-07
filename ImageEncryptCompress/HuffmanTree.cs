@@ -26,8 +26,9 @@ namespace ImageEncryptCompress
             Pixel sumPixel;
             sumPixel.value = 0; // value of middle nodes does not matter
             //           
-            while (Compression.pqRed.Count() > 1)
-            {
+            while (Compression.pqRed.Count() > 1) 
+            { 
+            
                 // Get the lowest two
                 leftPixel = Compression.pqRed.Dequeue();
                 rightPixel = Compression.pqRed.Dequeue();
@@ -46,18 +47,13 @@ namespace ImageEncryptCompress
         //
         public static void traverseTree(Pixel pixel,string currentCode)
         {
-            // add bit to currentCode (recheck)
-           /* if (bit == 1)
-                currentCode++;*/
             // base: if key is doesn't have a value -> node is a leaf node
             if (treeMap.ContainsKey(pixel.value) == false)
             {
                 pixelCodes[pixel] = currentCode;
                 return;
             }
-            // shift currentCode
-           /* var shifted = currentCode << 1;
-            currentCode = Convert.ToByte(shifted);*/
+
             // recurse
             traverseTree(treeMap[pixel.value].Item1,currentCode+'0');
             traverseTree(treeMap[pixel.value].Item2,currentCode+'1');
