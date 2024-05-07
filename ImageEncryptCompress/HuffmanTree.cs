@@ -8,7 +8,6 @@ namespace ImageEncryptCompress
 {
     public class HuffmanTree
     {
-        public static int nodeKeys = 256; // generate keys for middle nodes
         public static Dictionary<int, Tuple<Pixel, Pixel>> treeMap = new Dictionary<int, Tuple<Pixel, Pixel>>();
         public static Dictionary<Pixel, string> pixelCodes = new Dictionary<Pixel, string>();
         public static Pixel rootPixel = new Pixel();
@@ -24,7 +23,7 @@ namespace ImageEncryptCompress
             Pixel leftPixel;
             Pixel rightPixel;
             Pixel sumPixel;
-            sumPixel.value = 0; // value of middle nodes does not matter
+            sumPixel.value = 256; // value of middle nodes does not matter
             //           
             while (Compression.pqRed.Count() > 1) 
             { 
@@ -35,10 +34,11 @@ namespace ImageEncryptCompress
                 // create new node with their sum
                 sumPixel.frequency = leftPixel.frequency + rightPixel.frequency;
                 // add new map entry
-                treeMap.Add(nodeKeys, new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
-                nodeKeys++;
+                treeMap.Add(sumPixel.value, new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
                 // add new node to priority queue
                 Compression.pqRed.Enqueue(sumPixel);
+                // increment value
+                sumPixel.value++;
             }
             //
             rootPixel = Compression.pqRed.Dequeue();

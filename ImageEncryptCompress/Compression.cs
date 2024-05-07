@@ -15,18 +15,18 @@ namespace ImageEncryptCompress
 {
     public struct Pixel{
         
-       public byte value;
+       public int value;
        public int frequency;
     };
 
     public class Compression
     {
         // compressed image file path
-        public static string filePath = "./compressionTests/results/res1.txt";
+        public static string filePath = "../../../compressionTests/results/res1.txt";
         // frequency maps for each image channel
-        public static Dictionary<byte, int> redFrequency = new Dictionary<byte, int>();
-        public static Dictionary<byte, int> greenFrequency = new Dictionary<byte, int>();
-        public static Dictionary<byte, int> blueFrequency = new Dictionary<byte, int>();
+        public static Dictionary<int, int> redFrequency = new Dictionary<int, int>();
+        public static Dictionary<int, int> greenFrequency = new Dictionary<int, int>();
+        public static Dictionary<int, int> blueFrequency = new Dictionary<int, int>();
         //
         public static BinaryPriorityQueue<Pixel> pqRed = new 
             BinaryPriorityQueue<Pixel>((a, b) => a.frequency.CompareTo(b.frequency));
@@ -52,8 +52,7 @@ namespace ImageEncryptCompress
             HuffmanTree.BuildTree(image);
             // Create code for each pixel pixel
             string currentCode = "";
-            HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode + '0');
-            HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode + '1');
+            HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode);
             // replace each pixel value with its code in the compressed image
             byte[] compressedImage = createCompressedImage(image, HuffmanTree.pixelCodes);
             // save compressed image
