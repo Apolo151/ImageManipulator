@@ -15,16 +15,20 @@ namespace ImageEncryptCompress
 {
     public struct Pixel{
         
-       public byte value;
+       public int value;
        public int frequency;
     };
 
     public class Compression
     {
+        // compressed image file path
+        public static string filePath = "../../../compressionTests/results/res1.txt";
+        //
+        public static string pixelCodesPath = "../../../compressionTests/results/pixelCodes.txt";
         // frequency maps for each image channel
-        public static Dictionary<byte, int> redFrequency = new Dictionary<byte, int>();
-        public static Dictionary<byte, int> greenFrequency = new Dictionary<byte, int>();
-        public static Dictionary<byte, int> blueFrequency = new Dictionary<byte, int>();
+        public static Dictionary<int, int> redFrequency = new Dictionary<int, int>();
+        public static Dictionary<int, int> greenFrequency = new Dictionary<int, int>();
+        public static Dictionary<int, int> blueFrequency = new Dictionary<int, int>();
         //
         public static BinaryPriorityQueue<Pixel> pqRed = new 
             BinaryPriorityQueue<Pixel>((a, b) => a.frequency.CompareTo(b.frequency));
@@ -50,12 +54,14 @@ namespace ImageEncryptCompress
             HuffmanTree.BuildTree(image);
             // Create code for each pixel pixel
             string currentCode = "";
-            HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode + '0');
-            HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode + '1');
+            HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode);
+            // ---------for testing
+            HuffmanTree.savePixelCodes(pixelCodesPath, image);
+            //----------for testing
             // replace each pixel value with its code in the compressed image
-            
+            byte[] compressedImage = createCompressedImage(image, HuffmanTree.pixelCodes);
             // save compressed image
-
+            saveCompressedImage(compressedImage, filePath);
             //
             return;
         }
@@ -86,17 +92,17 @@ namespace ImageEncryptCompress
                 {
                     if (!redFrequency.ContainsKey(image[i, j].red))
                     {
-                        redFrequency[image[i, j].red] = 0;
+                        redFrequency[Convert.ToInt16(image[i, j].red)] = 0;
                     }
                     redFrequency[image[i, j].red]++;
                     if (!greenFrequency.ContainsKey(image[i, j].green))
                     {
-                        greenFrequency[image[i, j].green] = 0;
+                        greenFrequency[Convert.ToInt16(image[i, j].green)] = 0;
                     }
                     greenFrequency[image[i, j].green]++;
                     if (!blueFrequency.ContainsKey(image[i, j].blue))
                     {
-                        blueFrequency[image[i, j].blue] = 0;
+                        blueFrequency[Convert.ToInt16(image[i, j].blue)] = 0;
                     }
                     blueFrequency[image[i, j].blue]++;
                 }
@@ -109,21 +115,13 @@ namespace ImageEncryptCompress
             int height = ImageOperations.GetHeight(image);
             int width = ImageOperations.GetWidth(image);
             Pixel pixel;
-            for (int i = 0; i < height; i++)
+            foreach(var pair in redFrequency)
             {
-                for (int j = 0; j < width; j++)
-                {
-                    pixel.value = image[i, j].red;
-                    pixel.frequency = redFrequency[image[i, j].red];
-                    pqRed.Enqueue(pixel);
-                    pixel.value = image[i, j].green;
-                    pixel.frequency = greenFrequency[image[i, j].green];
-                    pqRed.Enqueue(pixel);
-                    pixel.value = image[i, j].blue;
-                    pixel.frequency = blueFrequency[image[i, j].blue];
-                    pqRed.Enqueue(pixel);
-                }
+                pixel.value = pair.Key;
+                pixel.frequency = pair.Value;
+                pqRed.Enqueue(pixel);
             }
+
             return;
         }
         public static byte[] createCompressedImage(RGBPixel[,] image ,Dictionary<Pixel, string> pixelCodes)
