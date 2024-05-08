@@ -65,12 +65,6 @@ namespace ImageEncryptCompress
         /// </summary>
         /// <param name="image"> the 2d image array</param>
         /// <returns>2D array of colors </returns>
-        public static RGBPixel[,] DecompressImage(RGBPixel[,] image)
-        {
-            // TODO
-            return null;
-        }
-
         private static void CalculatePixelsFrequency(RGBPixel[,] image)
         {
             //note: maybe refactor to use one dict. and call the func. three times,
@@ -178,7 +172,14 @@ namespace ImageEncryptCompress
         }
         public static void saveCompressedImage(byte[] compressedImage, string filePath)
         {
-            File.WriteAllBytes(filePath, compressedImage);
+            try
+            {
+                File.WriteAllBytes(filePath, compressedImage);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error in writing file: {e.Message}");
+            }
         }
         public static string ReadBinaryFile(string filePath)
         {
@@ -187,21 +188,58 @@ namespace ImageEncryptCompress
             {
                 // Read all bytes from the file
                 byte[] bytes = File.ReadAllBytes(filePath);
+                //looping over each byte and converting it to string;
                 foreach(byte b in bytes)
                 {
-                    compressedCodes = Convert.ToString(b, 2).PadLeft(8, '0');
+                    compressedCodes += Convert.ToString(b, 2).PadLeft(8, '0');
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Error reading file: {e.Message}");
             }
+
             return compressedCodes;
         }
 
-        public static void decompress(string compressedCodes)
+        public static RGBPixel[,] decompressImage(string compressedCodes, RGBPixel[,] image)
         {
-            //
+            //Getting parameters from old image
+            int height = ImageOperations.GetHeight(image);
+            int width = ImageOperations.GetWidth(image);
+
+            //intializing new image to hold the compressed values
+            RGBPixel[,] recoveredImage = new RGBPixel[height, width];
+
+            int bit = 0;
+            //iterating over each pixel in the image and getting its value
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                { 
+                    //intialize it with root pixel on huffman tree
+                    Pixel pixel = HuffmanTree.rootPixel;
+                    //looping over each bit until we find a leaf node
+                    for (; bit < compressedCodes.Count();bit++)
+                    {
+                        if (compressedCodes[bit] == '0')
+                        {
+                            pixel = HuffmanTree.treeMap[pixel.value].Item1;
+                        }
+                        else
+                        {
+                            pixel = HuffmanTree.treeMap[pixel.value].Item2;
+                        }
+                        //if leaf node is found assign the value to the image and break;
+                        if(HuffmanTree.treeMap.ContainsKey(pixel.value) == false)
+                        {
+                            recoveredImage[i, j].red = pixel.value;
+                            break;
+                        }
+                    }
+                }
+            }
+                    return recoveredImage;
         }
     }
 }
