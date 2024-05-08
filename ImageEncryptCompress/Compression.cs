@@ -65,7 +65,49 @@ namespace ImageEncryptCompress
             //
             return;
         }
+        //
+        public static RGBPixel[,] DecompressImage(string filePath)
+        {
+            string compressedCodes = ReadBinaryFile(filePath);
+            //Getting parameters from old image
+            int height = 3; //TODO change;
+            int width = 3; //TODO: change;
 
+            // TODO: maybe remove image, and retreive from file
+
+            //intializing new image to hold the compressed values
+            RGBPixel[,] recoveredImage = new RGBPixel[height, width];
+
+            int bit = 0;
+            //iterating over each pixel in the image and getting its value
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    //intialize it with root pixel on huffman tree
+                    Pixel pixel = HuffmanTree.rootPixel;
+                    //looping over each bit until we find a leaf node
+                    for (; bit < compressedCodes.Count(); bit++)
+                    {
+                        if (compressedCodes[bit] == '0')
+                        {
+                            pixel = HuffmanTree.treeMap[pixel.value].Item1;
+                        }
+                        else
+                        {
+                            pixel = HuffmanTree.treeMap[pixel.value].Item2;
+                        }
+                        //if leaf node is found assign the value to the image and break;
+                        if (HuffmanTree.treeMap.ContainsKey(pixel.value) == false)
+                        {
+                            recoveredImage[i, j].red = Convert.ToByte(pixel.value);
+                            break;
+                        }
+                    }
+                }
+            }
+            return recoveredImage;
+        }
         /// <summary>
         /// Decompress the image's 2D color array using reverse huffman encoding
         /// </summary>
@@ -118,6 +160,7 @@ namespace ImageEncryptCompress
 
             return;
         }
+        //
         public static byte[] createCompressedImage(RGBPixel[,] image ,Dictionary<Pixel, string> pixelCodes)
         {
             Pixel pixel;
@@ -168,7 +211,7 @@ namespace ImageEncryptCompress
             //returns list of bytes which represents the compressed image
             return compressedImage;
         }
-
+        //
         public static void saveCompressedImage(byte[] compressedImage, string filePath)
         {
             try
@@ -180,7 +223,7 @@ namespace ImageEncryptCompress
                 Console.WriteLine($"Error in writing file: {e.Message}");
             }
         }
-
+        //
         public static string ReadBinaryFile(string filePath)
         {
             string compressedCodes="";
@@ -201,50 +244,16 @@ namespace ImageEncryptCompress
 
             return compressedCodes;
         }
-
-        // TODO: add functions to save and load tree
-
-        public static RGBPixel[,] DecompressImage(string filePath)
+        //
+        public static void ReadTreeFile(string filePath)
         {
-            string compressedCodes = ReadBinaryFile(filePath);
-            //Getting parameters from old image
-            int height = 3; //TODO change;
-            int width = 3; //TODO: change;
-
-            // TODO: maybe remove image, and retreive from file
-
-            //intializing new image to hold the compressed values
-            RGBPixel[,] recoveredImage = new RGBPixel[height, width];
-
-            int bit = 0;
-            //iterating over each pixel in the image and getting its value
-            for (int i = 0; i < height; i++)
-            {
-                for (int j = 0; j < width; j++)
-                { 
-                    //intialize it with root pixel on huffman tree
-                    Pixel pixel = HuffmanTree.rootPixel;
-                    //looping over each bit until we find a leaf node
-                    for (; bit < compressedCodes.Count();bit++)
-                    {
-                        if (compressedCodes[bit] == '0')
-                        {
-                            pixel = HuffmanTree.treeMap[pixel.value].Item1;
-                        }
-                        else
-                        {
-                            pixel = HuffmanTree.treeMap[pixel.value].Item2;
-                        }
-                        //if leaf node is found assign the value to the image and break;
-                        if(HuffmanTree.treeMap.ContainsKey(pixel.value) == false)
-                        {
-                            recoveredImage[i, j].red = Convert.ToByte(pixel.value);
-                            break;
-                        }
-                    }
-                }
-            }
-                    return recoveredImage;
+            // TODO
         }
+        //
+        public static void saveTreeFile(string filePath)
+        {
+            // TODO
+        }
+
     }
 }
