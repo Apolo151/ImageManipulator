@@ -62,7 +62,8 @@ namespace ImageEncryptCompress
             {
                 //Open the browsed image and display it
                 string OpenedFilePath = openFileDialog1.FileName;
-                ImageMatrix = Compression.DecompressImage(OpenedFilePath);
+                string TreePath = Compression.constructTreePath(OpenedFilePath);
+                ImageMatrix = Compression.DecompressImage(OpenedFilePath, TreePath);
                 ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
             }
         }
