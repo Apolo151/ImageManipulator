@@ -231,7 +231,7 @@ namespace ImageEncryptCompress
                         //if leaf node is found assign the value to the image and break;
                         if(HuffmanTree.treeMap.ContainsKey(pixel.value) == false)
                         {
-                            recoveredImage[i, j].red = pixel.value;
+                            recoveredImage[i, j].red = Convert.ToByte(pixel.value);
                             break;
                         }
                     }
