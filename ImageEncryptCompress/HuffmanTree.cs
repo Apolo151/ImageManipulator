@@ -75,6 +75,7 @@ namespace ImageEncryptCompress
                         string code = kvp.Value;
                         writer.WriteLine($"{pixel.value},{pixel.frequency},{code}");
                     }
+                    writer.WriteLine(Compression.constructTreePath(filePath));
                     /*
                     writer.WriteLine("-------");
                     for (int i = 0; i < height; i++)

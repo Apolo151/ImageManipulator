@@ -25,7 +25,7 @@ namespace ImageEncryptCompress
     public class Compression
     {
         // compressed image file path
-        public static string filePath = "../../../compressionTests/results/res1.txt";
+        public static string saveImagePath = "../../../compressionTests/results/res1.txt";
         //
         public static string pixelCodesPath = "../../../compressionTests/results/pixelCodes.txt";
         // frequency maps for each image channel
@@ -39,8 +39,9 @@ namespace ImageEncryptCompress
             BinaryPriorityQueue<Pixel>((a, b) => a.frequency.CompareTo(b.frequency));
         public static BinaryPriorityQueue<Pixel> pqBlue = new
             BinaryPriorityQueue<Pixel>((a, b) => a.frequency.CompareTo(b.frequency));
+        // padding for compressed image
+        public static int padding;
 
-        
         /// <summary>
         /// Compress the image's 2D color array using huffman encoding
         /// </summary>
@@ -48,7 +49,9 @@ namespace ImageEncryptCompress
         /// <returns>2D array of colors </returns>
         public static void CompressImage(RGBPixel[,] image)
         {
-            //TODO
+            //getting image parameters
+            int height = ImageOperations.GetHeight(image);
+            int width = ImageOperations.GetWidth(image);
             // Calculate freq for each pixel
             CalculatePixelsFrequency(image);
             // Fill Priority queue to use for tree building
@@ -58,17 +61,18 @@ namespace ImageEncryptCompress
             // Create code for each pixel pixel
             string currentCode = "";
             HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode);
-            // ---------for testing
-            HuffmanTree.savePixelCodes(pixelCodesPath, image);
-            //----------for testing
             // replace each pixel value with its code in the compressed image
             byte[] compressedImage = createCompressedImage(image, HuffmanTree.pixelCodes);
             // save compressed image
-            saveCompressedImage(compressedImage, filePath);
-            //getting image parameters
-            int height = ImageOperations.GetHeight(image);
-            int width = ImageOperations.GetWidth(image);
-            saveTreeFile(filePath, height, width);
+            saveCompressedImage(compressedImage, saveImagePath, height, width);
+            string TreePath = constructTreePath(saveImagePath);
+            saveTreeFile(TreePath, height, width);
+            //
+            // ---------for testing
+            HuffmanTree.savePixelCodes(pixelCodesPath, image);
+            //----------for testing
+            // clear map
+            HuffmanTree.treeMap.Clear();
             //
             return;
         }
@@ -93,7 +97,7 @@ namespace ImageEncryptCompress
                     //intialize it with root pixel on huffman tree
                     Pixel pixel = HuffmanTree.rootPixel;
                     //looping over each bit until we find a leaf node
-                    for (; bit < compressedCodes.Count(); bit++)
+                    for (; bit < compressedCodes.Count()-padding; bit++)
                     {
                         if (compressedCodes[bit] == '0')
                         {
@@ -107,6 +111,9 @@ namespace ImageEncryptCompress
                         if (HuffmanTree.treeMap.ContainsKey(pixel.value) == false)
                         {
                             recoveredImage[i, j].red = Convert.ToByte(pixel.value);
+                            recoveredImage[i, j].green = Convert.ToByte(0);
+                            recoveredImage[i, j].blue = Convert.ToByte(0);
+                            bit++;
                             break;
                         }
                     }
@@ -189,8 +196,8 @@ namespace ImageEncryptCompress
             }
             //Turning bits to bytes to be able to save in binary files
             //Add padding to ensure number of bits are divisible by 8
-            int padding = (8-(compressedImageBits.Count % 8))%8;
-            while(padding > 0)
+            padding = (8-(compressedImageBits.Count % 8))%8;
+            for(int i=0; i < padding; i++)
             {
                 compressedImageBits.Add(false);
                 padding--;
@@ -218,7 +225,7 @@ namespace ImageEncryptCompress
             return compressedImage;
         }
         //
-        public static void saveCompressedImage(byte[] compressedImage, string filePath)
+        public static void saveCompressedImage(byte[] compressedImage, string filePath, int height, int width)
         {
             try
             {
@@ -269,10 +276,20 @@ namespace ImageEncryptCompress
                 dimensions = line.Split(',');
                 // skip next line
                 line = reader.ReadLine();
-                // read dictionary entries
+                // read root node
                 string[] entry;
                 Pixel leftPixel;
                 Pixel rightPixel;
+                line = reader.ReadLine();
+                entry = line.Split(',');
+                leftPixel.value = Convert.ToInt32(entry[1]);
+                leftPixel.frequency = 12;
+                rightPixel.value = Convert.ToInt32(entry[2]);
+                rightPixel.frequency = 11;
+                HuffmanTree.treeMap.Add(Convert.ToInt32(entry[0]), new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
+                HuffmanTree.rootPixel.value = Convert.ToInt32(entry[0]);
+                // read dictionary entries
+
                 while ((line = reader.ReadLine()) != null)
                 {
                     entry = line.Split(',');
@@ -304,22 +321,49 @@ namespace ImageEncryptCompress
         {
             try
             {
-                //Save Image dimensions
-                File.WriteAllText(filePath, $"{height},{width}");
-                //Empty Line
-                File.WriteAllText(filePath, "                ");
-                //Save Huffman Tree
-                string pixelFamily;
-                foreach (var pixel in HuffmanTree.treeMap)
+                // Write some text to the file
+                using (StreamWriter writer = new StreamWriter(filePath))
                 {
-                    pixelFamily = pixel.Key.ToString() +','+ pixel.Value.Item1.ToString()+','+pixel.Value.Item2.ToString();
-                    File.WriteAllText(filePath, pixelFamily);
+                    //Save Image dimensions
+                    string h = Convert.ToString(height);
+                    string w = Convert.ToString(width);
+                    writer.WriteLine(h + "," + w);
+                    // write line
+                    writer.WriteLine("------");
+                    
+                    //Save Huffman Tree
+                    string pixelFamily;
+                    foreach (var pixel in HuffmanTree.treeMap)
+                    {
+                        pixelFamily = pixel.Key.ToString() + "," 
+                            + pixel.Value.Item1.value.ToString() + ',' + pixel.Value.Item2.value.ToString();
+                        writer.WriteLine(pixelFamily);
+                    }
+                    
                 }
+
+                Console.WriteLine("Data has been written to the file.");
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Error in writing file: {e.Message}");
             }
+        }
+        //
+        public static string constructTreePath(string filePath)
+        {
+            int idx = filePath.LastIndexOf("/");
+            if(idx == -1)
+            {
+                idx = filePath.LastIndexOf("\\");
+            }
+            string baseStr = filePath.Substring(0, idx);
+            //
+            string suffix = filePath.Substring(idx);
+            suffix = suffix.Substring(0, suffix.Length-4);
+            suffix += "Tree.txt";
+            baseStr += suffix;
+            return baseStr;
         }
 
     }
