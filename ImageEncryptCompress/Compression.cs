@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using PriorityQueues;
 using System.IO;
+using System.Linq.Expressions;
+using System.Drawing.Imaging;
+using System.Windows.Forms.VisualStyles;
 
 // Used priority queue implementation: https://github.com/mikkul/PriorityQueue/tree/master
 
@@ -70,14 +73,13 @@ namespace ImageEncryptCompress
             return;
         }
         //
-        public static RGBPixel[,] DecompressImage(string filePath)
+        public static RGBPixel[,] DecompressImage(string imagePath, string treePath)
         {
-            string compressedCodes = ReadBinaryFile(filePath);
+            string compressedCodes = ReadBinaryFile(imagePath);
+            string[] dimensions = ReadTreeFile(treePath);
             //Getting parameters from old image
-            int height = 3; //TODO change;
-            int width = 3; //TODO: change;
-
-            // TODO: maybe remove image, and retreive from file
+            int height = Convert.ToInt32(dimensions[0]);
+            int width = Convert.ToInt32(dimensions[1]);
 
             //intializing new image to hold the compressed values
             RGBPixel[,] recoveredImage = new RGBPixel[height, width];
@@ -249,9 +251,53 @@ namespace ImageEncryptCompress
             return compressedCodes;
         }
         //
-        public static void ReadTreeFile(string filePath)
+        public static string[] ReadTreeFile(string filePath)
         {
-            // TODO
+            string[] dimensions;
+            // Initialize the StreamReader
+            StreamReader reader = null;
+            try
+            {
+                reader = new StreamReader(filePath);
+                string line;
+                // read height and width
+                line = reader.ReadLine();
+                if(line == null)
+                {
+                    throw new Exception("Image dimensions are not present in file");
+                }
+                dimensions = line.Split(',');
+                // skip next line
+                line = reader.ReadLine();
+                // read dictionary entries
+                string[] entry;
+                Pixel leftPixel;
+                Pixel rightPixel;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    entry = line.Split(',');
+                    leftPixel.value = Convert.ToInt32(entry[1]);
+                    leftPixel.frequency = 12;
+                    rightPixel.value = Convert.ToInt32(entry[2]);
+                    rightPixel.frequency = 11;
+                    HuffmanTree.treeMap.Add(Convert.ToInt32(entry[0]), new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred: " + ex.Message);
+                throw ex;
+            }
+            finally
+            {
+                // Close the StreamReader in the finally block
+                if (reader != null)
+                {
+                    reader.Close();
+                }
+            }
+
+            return dimensions;
         }
         //
         public static void saveTreeFile(string filePath, int height, int width)
