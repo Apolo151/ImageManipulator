@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using PriorityQueues;
 using System.IO;
-using System.Linq.Expressions;
-using System.Drawing.Imaging;
-using System.Windows.Forms.VisualStyles;
 
 // Used priority queue implementation: https://github.com/mikkul/PriorityQueue/tree/master
 
@@ -25,7 +17,7 @@ namespace ImageEncryptCompress
     public class Compression
     {
         // compressed image file path
-        public static string saveImagePath = "../../../compressionTests/results/res1.txt";
+       public static string saveImagePath = "../../../compressionTests/results/res1.txt";
         //
         public static string pixelCodesPath = "../../../compressionTests/results/pixelCodes.txt";
         // frequency maps for each image channel
