@@ -168,6 +168,7 @@ namespace ImageEncryptCompress
             //returns list of bytes which represents the compressed image
             return compressedImage;
         }
+
         public static void saveCompressedImage(byte[] compressedImage, string filePath)
         {
             try
@@ -179,6 +180,7 @@ namespace ImageEncryptCompress
                 Console.WriteLine($"Error in writing file: {e.Message}");
             }
         }
+
         public static string ReadBinaryFile(string filePath)
         {
             string compressedCodes="";
@@ -200,11 +202,16 @@ namespace ImageEncryptCompress
             return compressedCodes;
         }
 
-        public static RGBPixel[,] decompressImage(string compressedCodes, RGBPixel[,] image)
+        // TODO: add functions to save and load tree
+
+        public static RGBPixel[,] DecompressImage(string filePath)
         {
+            string compressedCodes = ReadBinaryFile(filePath);
             //Getting parameters from old image
-            int height = ImageOperations.GetHeight(image);
-            int width = ImageOperations.GetWidth(image);
+            int height = 3; //TODO change;
+            int width = 3; //TODO: change;
+
+            // TODO: maybe remove image, and retreive from file
 
             //intializing new image to hold the compressed values
             RGBPixel[,] recoveredImage = new RGBPixel[height, width];

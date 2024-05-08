@@ -57,7 +57,14 @@ namespace ImageEncryptCompress
 
         private void btnDecompress_Click(object sender, EventArgs e)
         {
-            Compression.DecompressImage(ImageMatrix);
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                //Open the browsed image and display it
+                string OpenedFilePath = openFileDialog1.FileName;
+                ImageMatrix = Compression.DecompressImage(OpenedFilePath);
+                ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
+            }
         }
 
         private void nudMaskSize_ValueChanged(object sender, EventArgs e)
