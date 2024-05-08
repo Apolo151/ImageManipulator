@@ -23,6 +23,8 @@ namespace ImageEncryptCompress
     {
         // compressed image file path
         public static string filePath = "../../../compressionTests/results/res1.txt";
+        //
+        public static string pixelCodesPath = "../../../compressionTests/results/pixelCodes.txt";
         // frequency maps for each image channel
         public static Dictionary<int, int> redFrequency = new Dictionary<int, int>();
         public static Dictionary<int, int> greenFrequency = new Dictionary<int, int>();
@@ -53,6 +55,9 @@ namespace ImageEncryptCompress
             // Create code for each pixel pixel
             string currentCode = "";
             HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode);
+            // ---------for testing
+            HuffmanTree.savePixelCodes(pixelCodesPath, image);
+            //----------for testing
             // replace each pixel value with its code in the compressed image
             byte[] compressedImage = createCompressedImage(image, HuffmanTree.pixelCodes);
             // save compressed image
@@ -87,17 +92,17 @@ namespace ImageEncryptCompress
                 {
                     if (!redFrequency.ContainsKey(image[i, j].red))
                     {
-                        redFrequency[image[i, j].red] = 0;
+                        redFrequency[Convert.ToInt16(image[i, j].red)] = 0;
                     }
                     redFrequency[image[i, j].red]++;
                     if (!greenFrequency.ContainsKey(image[i, j].green))
                     {
-                        greenFrequency[image[i, j].green] = 0;
+                        greenFrequency[Convert.ToInt16(image[i, j].green)] = 0;
                     }
                     greenFrequency[image[i, j].green]++;
                     if (!blueFrequency.ContainsKey(image[i, j].blue))
                     {
-                        blueFrequency[image[i, j].blue] = 0;
+                        blueFrequency[Convert.ToInt16(image[i, j].blue)] = 0;
                     }
                     blueFrequency[image[i, j].blue]++;
                 }

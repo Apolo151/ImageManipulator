@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,10 +56,44 @@ namespace ImageEncryptCompress
             }
 
             // recurse
-            traverseTree(treeMap[pixel.value].Item1,currentCode+'0');
-            traverseTree(treeMap[pixel.value].Item2,currentCode+'1');
+            traverseTree(treeMap[pixel.value].Item1,currentCode+'1');
+            traverseTree(treeMap[pixel.value].Item2,currentCode+'0');
             return;
         }
         //
+        public static void savePixelCodes(string filePath, RGBPixel[,] image)
+        {
+            int height = ImageOperations.GetHeight(image);
+            int width = ImageOperations.GetWidth(image);
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(filePath))
+                {
+                    foreach (var kvp in pixelCodes)
+                    {
+                        Pixel pixel = kvp.Key;
+                        string code = kvp.Value;
+                        writer.WriteLine($"{pixel.value},{pixel.frequency},{code}");
+                    }
+                    /*
+                    writer.WriteLine("-------");
+                    for (int i = 0; i < height; i++)
+                    {
+                        for (int j = 0; j < width; j++)
+                        {
+                            writer.Write(image[i, j].red);
+                        }
+                        writer.WriteLine();
+                    }
+                    */
+                }
+                Console.WriteLine("Pixel codes saved to file successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving pixel codes to file: {ex.Message}");
+            }
+
+        }
     }
 }
