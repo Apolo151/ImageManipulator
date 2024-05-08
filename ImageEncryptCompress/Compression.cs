@@ -180,5 +180,28 @@ namespace ImageEncryptCompress
         {
             File.WriteAllBytes(filePath, compressedImage);
         }
+        public static string ReadBinaryFile(string filePath)
+        {
+            string compressedCodes="";
+            try
+            {
+                // Read all bytes from the file
+                byte[] bytes = File.ReadAllBytes(filePath);
+                foreach(byte b in bytes)
+                {
+                    compressedCodes = Convert.ToString(b, 2).PadLeft(8, '0');
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error reading file: {e.Message}");
+            }
+            return compressedCodes;
+        }
+
+        public static void decompress(string compressedCodes)
+        {
+            //
+        }
     }
 }
