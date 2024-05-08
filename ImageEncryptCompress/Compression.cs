@@ -62,6 +62,10 @@ namespace ImageEncryptCompress
             byte[] compressedImage = createCompressedImage(image, HuffmanTree.pixelCodes);
             // save compressed image
             saveCompressedImage(compressedImage, filePath);
+            //getting image parameters
+            int height = ImageOperations.GetHeight(image);
+            int width = ImageOperations.GetWidth(image);
+            saveTreeFile(filePath, height, width);
             //
             return;
         }
@@ -250,9 +254,26 @@ namespace ImageEncryptCompress
             // TODO
         }
         //
-        public static void saveTreeFile(string filePath)
+        public static void saveTreeFile(string filePath, int height, int width)
         {
-            // TODO
+            try
+            {
+                //Save Image dimensions
+                File.WriteAllText(filePath, $"{height},{width}");
+                //Empty Line
+                File.WriteAllText(filePath, "                ");
+                //Save Huffman Tree
+                string pixelFamily;
+                foreach (var pixel in HuffmanTree.treeMap)
+                {
+                    pixelFamily = pixel.Key.ToString() +','+ pixel.Value.Item1.ToString()+','+pixel.Value.Item2.ToString();
+                    File.WriteAllText(filePath, pixelFamily);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error in writing file: {e.Message}");
+            }
         }
 
     }
