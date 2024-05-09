@@ -46,6 +46,8 @@ namespace ImageEncryptCompress
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnDecompress = new System.Windows.Forms.Button();
+            this.compressionRatioBox = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTapPos)).BeginInit();
@@ -187,7 +189,7 @@ namespace ImageEncryptCompress
             this.nudTapPos.Size = new System.Drawing.Size(76, 27);
             this.nudTapPos.TabIndex = 10;
             this.nudTapPos.Value = new decimal(new int[] {
-            3,
+            7,
             0,
             0,
             0});
@@ -269,11 +271,34 @@ namespace ImageEncryptCompress
             this.btnDecompress.UseVisualStyleBackColor = true;
             this.btnDecompress.Click += new System.EventHandler(this.btnDecompress_Click);
             // 
+            // compressionRatioBox
+            // 
+            this.compressionRatioBox.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.compressionRatioBox.Location = new System.Drawing.Point(1244, 46);
+            this.compressionRatioBox.Margin = new System.Windows.Forms.Padding(4);
+            this.compressionRatioBox.Name = "compressionRatioBox";
+            this.compressionRatioBox.ReadOnly = true;
+            this.compressionRatioBox.Size = new System.Drawing.Size(97, 27);
+            this.compressionRatioBox.TabIndex = 18;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(1210, 21);
+            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(171, 21);
+            this.label7.TabIndex = 19;
+            this.label7.Text = "Compression Ratio";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1205, 615);
+            this.ClientSize = new System.Drawing.Size(1394, 664);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.compressionRatioBox);
             this.Controls.Add(this.btnDecompress);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -325,6 +350,8 @@ namespace ImageEncryptCompress
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button btnDecompress;
+        private System.Windows.Forms.TextBox compressionRatioBox;
+        private System.Windows.Forms.Label label7;
     }
 }
 

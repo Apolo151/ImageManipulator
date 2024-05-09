@@ -24,10 +24,10 @@ namespace ImageEncryptCompress
 
     public class Compression
     {
-        // compressed image file path
-        public static string saveImagePath = "../../../compressionTests/results/res1.txt";
+        // compressed image file pathD:\Code_projects\Uni\algo\project\ImageEncryptCompress\SampleCases_Compression
+        public static string saveImagePath = "../../../SampleCases_Compression/results/res1.txt";
         //
-        public static string pixelCodesPath = "../../../compressionTests/results/pixelCodes.txt";
+        public static string pixelCodesPath = "../../../SampleCases_Compression/results/pixelCodes.txt";
         // frequency maps for each image channel
         public static Dictionary<int, int> redFrequency = new Dictionary<int, int>();
         public static Dictionary<int, int> greenFrequency = new Dictionary<int, int>();
@@ -47,7 +47,7 @@ namespace ImageEncryptCompress
         /// </summary>
         /// <param name="image"> the 2d image array</param>
         /// <returns>2D array of colors </returns>
-        public static void CompressImage(RGBPixel[,] image)
+        public static float CompressImage(RGBPixel[,] image)
         {
             //getting image parameters
             int height = ImageOperations.GetHeight(image);
@@ -73,8 +73,8 @@ namespace ImageEncryptCompress
             //----------for testing
             // clear map
             HuffmanTree.treeMap.Clear();
-            //
-            return;
+            // calculate and save compression ratio
+            return getCompressionRatio(width, height, compressedImage.Length); ;
         }
         //
         public static RGBPixel[,] DecompressImage(string imagePath, string treePath)
@@ -203,7 +203,7 @@ namespace ImageEncryptCompress
                 padding--;
             }
 
-            byte[] compressedImage = new byte[compressedImageBits.Count/8];
+            byte[] compressedImage = new byte[compressedImageBits.Count/8 + 1];
             //looping over 8 bits at once to construct compressed image bytes
             for (int i = 0; i < compressedImageBits.Count; i += 8)
             {
@@ -364,6 +364,12 @@ namespace ImageEncryptCompress
             suffix += "Tree.txt";
             baseStr += suffix;
             return baseStr;
+        }
+        //
+        public static float getCompressionRatio(int imgWidth, int imgHeight, int compressedLength)
+        {
+            double oldImgSize = imgWidth* imgHeight*8;
+            return (float)(compressedLength*1.0/oldImgSize);
         }
 
     }

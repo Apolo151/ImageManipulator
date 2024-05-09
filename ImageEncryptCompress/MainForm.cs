@@ -55,7 +55,9 @@ namespace ImageEncryptCompress
 
         private void btnCompress_Click(object sender, EventArgs e)
         {
-            Compression.CompressImage(ImageMatrix);
+            // return compression ratio
+            float compressionRatio = Compression.CompressImage(ImageMatrix);
+            compressionRatioBox.Text = Math.Round(compressionRatio, 5).ToString();
         }
 
         private void btnDecompress_Click(object sender, EventArgs e)
