@@ -50,6 +50,8 @@
   <ItemGroup>
     <Compile Include="HuffmanTree.cs" />
     <Compile Include="Compression.cs" />
+    <Compile Include="ImageBreaker.cs" />
+    <Compile Include="ImageEncryption.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

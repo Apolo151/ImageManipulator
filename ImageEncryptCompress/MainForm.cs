@@ -31,23 +31,26 @@ namespace ImageEncryptCompress
             txtHeight.Text = ImageOperations.GetHeight(ImageMatrix).ToString();
         }
 
-        private void btnGaussSmooth_Click(object sender, EventArgs e)
+        private void btnEncryptDecrypt_Click(object sender, EventArgs e)
         {
-            double sigma = double.Parse(txtGaussSigma.Text);
-            int maskSize = (int)nudMaskSize.Value ;
-            ImageMatrix = ImageOperations.GaussianFilter1D(ImageMatrix, maskSize, sigma);
+
+            string password = "eP$^6trvdsf2@2232jfkdlfs";
+
+            int seedLength = int.Parse(txtSeedLen.Text); // set to 20
+            int tapPosition = (int)nudTapPos.Value; // set to 11
+            ImageEncryption imageEncryption = new ImageEncryption(password);
+            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedLength, tapPosition, "");
             ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
-        }
 
-        private void btnEncrypt_Click(object sender, EventArgs e)
-        {
-            // TODO
+            /* Initialize ImageBreaker object
+            ImageBreaker imageBreaker = new ImageBreaker(ImageMatrix);
 
-        }
-
-        private void btnDecrypt_Click(object sender, EventArgs e)
-        {
-            // TODO
+            /* Break the image encryption
+            int seedLength = 8; // Example seed length
+            imageBreaker.BreakImage(seedLength);
+            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedLength, imageBreaker.bestTap, imageBreaker.bestLfsr, true);
+            ImageOperations.DisplayImage(ImageMatrix, pictureBox1);
+            */
         }
 
         private void btnCompress_Click(object sender, EventArgs e)
@@ -66,11 +69,6 @@ namespace ImageEncryptCompress
                 ImageMatrix = Compression.DecompressImage(OpenedFilePath, TreePath);
                 ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
             }
-        }
-
-        private void nudMaskSize_ValueChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }
