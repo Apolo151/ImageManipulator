@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using PriorityQueues;
 using System.IO;
+using System.Windows.Forms;
+using System.Threading.Tasks;
+
 
 // Used priority queue implementation: https://github.com/mikkul/PriorityQueue/tree/master
 
@@ -49,22 +52,26 @@ namespace ImageEncryptCompress
             // Fill Priority queue to use for tree building
             FillPQueues(image);
             // Build Huffman Tree
-            HuffmanTree.BuildTree(image);
+            HuffmanTree.BuildTree();
             // Create code for each pixel pixel
             string currentCode = "";
-            HuffmanTree.traverseTree(HuffmanTree.rootPixel, currentCode);
+            HuffmanTree.traverseTree(HuffmanTree.rootPixelR, currentCode, ref HuffmanTree.pixelCodesR, HuffmanTree.treeMapR);
+            HuffmanTree.traverseTree(HuffmanTree.rootPixelG, currentCode, ref HuffmanTree.pixelCodesG, HuffmanTree.treeMapG);
+            HuffmanTree.traverseTree(HuffmanTree.rootPixelB, currentCode, ref HuffmanTree.pixelCodesB, HuffmanTree.treeMapB);
             // replace each pixel value with its code in the compressed image
-            byte[] compressedImage = createCompressedImage(image, HuffmanTree.pixelCodes);
+            byte[] compressedImage = createCompressedImage(image);
             // save compressed image
             saveCompressedImage(compressedImage, saveImagePath, height, width);
             string TreePath = constructTreePath(saveImagePath);
             saveTreeFile(TreePath, height, width);
             //
             // ---------for testing
-            HuffmanTree.savePixelCodes(pixelCodesPath, image);
+            // HuffmanTree.savePixelCodes(pixelCodesPath, image);
             //----------for testing
             // clear map
-            HuffmanTree.treeMap.Clear();
+            HuffmanTree.treeMapR.Clear();
+            HuffmanTree.treeMapG.Clear();
+            HuffmanTree.treeMapB.Clear();
             //
             return;
         }
@@ -87,30 +94,84 @@ namespace ImageEncryptCompress
                 for (int j = 0; j < width; j++)
                 {
                     //intialize it with root pixel on huffman tree
-                    Pixel pixel = HuffmanTree.rootPixel;
-                    //looping over each bit until we find a leaf node
-                    for (; bit < compressedCodes.Count()-padding; bit++)
+                    for (int c = 0; c < 3; c++)
                     {
-                        if (compressedCodes[bit] == '0')
+                        if (c == 0)
                         {
-                            pixel = HuffmanTree.treeMap[pixel.value].Item1;
+                            Pixel pixel = HuffmanTree.rootPixelR;
+                            //looping over each bit until we find a leaf node
+                            for (; bit < compressedCodes.Count() - padding; bit++)
+                            {
+                                if (compressedCodes[bit] == '0')
+                                {
+                                    pixel = HuffmanTree.treeMapR[pixel.value].Item1;
+                                }
+                                else
+                                {
+                                    pixel = HuffmanTree.treeMapR[pixel.value].Item2;
+                                }
+                                //if leaf node is found assign the value to the image and break;
+                                if (HuffmanTree.treeMapR.ContainsKey(pixel.value) == false)
+                                {
+                                    recoveredImage[i, j].red = Convert.ToByte(pixel.value);
+                                    bit++;
+                                    break;
+                                }
+                            }
                         }
-                        else
+                        else if(c == 1)
                         {
-                            pixel = HuffmanTree.treeMap[pixel.value].Item2;
+                            Pixel pixel = HuffmanTree.rootPixelG;
+                            //looping over each bit until we find a leaf node
+                            for (; bit < compressedCodes.Count() - padding; bit++)
+                            {
+                                if (compressedCodes[bit] == '0')
+                                {
+                                    pixel = HuffmanTree.treeMapG[pixel.value].Item1;
+                                }
+                                else
+                                {
+                                    pixel = HuffmanTree.treeMapG[pixel.value].Item2;
+                                }
+                                //if leaf node is found assign the value to the image and break;
+                                if (HuffmanTree.treeMapG.ContainsKey(pixel.value) == false)
+                                {
+                                    recoveredImage[i, j].green = Convert.ToByte(pixel.value);
+                                    //Console.WriteLine(pixel.value);
+                                    //Console.WriteLine(recoveredImage[i, j].green);
+
+                                    bit++;
+                                    break;
+                                }
+                            }
                         }
-                        //if leaf node is found assign the value to the image and break;
-                        if (HuffmanTree.treeMap.ContainsKey(pixel.value) == false)
+                        else if(c == 2)
                         {
-                            recoveredImage[i, j].red = Convert.ToByte(pixel.value);
-                            recoveredImage[i, j].green = Convert.ToByte(0);
-                            recoveredImage[i, j].blue = Convert.ToByte(0);
-                            bit++;
-                            break;
+                            Pixel pixel = HuffmanTree.rootPixelB;
+                            //looping over each bit until we find a leaf node
+                            for (; bit < compressedCodes.Count() - padding; bit++)
+                            {
+                                if (compressedCodes[bit] == '0')
+                                {
+                                    pixel = HuffmanTree.treeMapB[pixel.value].Item1;
+                                }
+                                else
+                                {
+                                    pixel = HuffmanTree.treeMapB[pixel.value].Item2;
+                                }
+                                //if leaf node is found assign the value to the image and break;
+                                if (HuffmanTree.treeMapB.ContainsKey(pixel.value) == false)
+                                {
+                                    recoveredImage[i, j].blue = Convert.ToByte(pixel.value);
+                                    bit++;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
             }
+
             return recoveredImage;
         }
         /// <summary>
@@ -162,11 +223,23 @@ namespace ImageEncryptCompress
                 pixel.frequency = pair.Value;
                 pqRed.Enqueue(pixel);
             }
+            foreach (var pair in greenFrequency)
+            {
+                pixel.value = pair.Key;
+                pixel.frequency = pair.Value;
+                pqGreen.Enqueue(pixel);
+            }
+            foreach (var pair in blueFrequency)
+            {
+                pixel.value = pair.Key;
+                pixel.frequency = pair.Value;
+                pqBlue.Enqueue(pixel);
+            }
 
             return;
         }
         //
-        public static byte[] createCompressedImage(RGBPixel[,] image ,Dictionary<Pixel, string> pixelCodes)
+        public static byte[] createCompressedImage(RGBPixel[,] image)
         {
             Pixel pixel;
             List<bool> compressedImageBits = new List<bool>();
@@ -176,14 +249,36 @@ namespace ImageEncryptCompress
             {
                 for (int j = 0; j < width; j++)
                 {
+                    //RED
                     pixel.value = image[i, j].red;
                     pixel.frequency = redFrequency[image[i, j].red];
 
                     //adding every huffman code bit to compressedImageBits list
-                    foreach (char bit in pixelCodes[pixel])
+                    foreach (char bit in HuffmanTree.pixelCodesR[pixel])
                     {
                         compressedImageBits.Add(bit == '1');
                     }
+
+                    //GREEN
+                    pixel.value = image[i, j].green;
+                    pixel.frequency = greenFrequency[image[i, j].green];
+
+                    //adding every huffman code bit to compressedImageBits list
+                    foreach (char bit in HuffmanTree.pixelCodesG[pixel])
+                    {
+                        compressedImageBits.Add(bit == '1');
+                    }
+
+                    //BLUE
+                    pixel.value = image[i, j].blue;
+                    pixel.frequency = blueFrequency[image[i, j].blue];
+
+                    //adding every huffman code bit to compressedImageBits list
+                    foreach (char bit in HuffmanTree.pixelCodesB[pixel])
+                    {
+                        compressedImageBits.Add(bit == '1');
+                    }
+
                 }
             }
             //Turning bits to bytes to be able to save in binary files
@@ -195,7 +290,7 @@ namespace ImageEncryptCompress
                 padding--;
             }
 
-            byte[] compressedImage = new byte[compressedImageBits.Count/8];
+            byte[] compressedImage = new byte[compressedImageBits.Count/8 + 1];
             //looping over 8 bits at once to construct compressed image bytes
             for (int i = 0; i < compressedImageBits.Count; i += 8)
             {
@@ -267,11 +362,8 @@ namespace ImageEncryptCompress
                 }
                 dimensions = line.Split(',');
                 // skip next line
-                line = reader.ReadLine();
+/*                line = reader.ReadLine();
                 // read root node
-                string[] entry;
-                Pixel leftPixel;
-                Pixel rightPixel;
                 line = reader.ReadLine();
                 entry = line.Split(',');
                 leftPixel.value = Convert.ToInt32(entry[1]);
@@ -279,17 +371,80 @@ namespace ImageEncryptCompress
                 rightPixel.value = Convert.ToInt32(entry[2]);
                 rightPixel.frequency = 11;
                 HuffmanTree.treeMap.Add(Convert.ToInt32(entry[0]), new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
-                HuffmanTree.rootPixel.value = Convert.ToInt32(entry[0]);
+                HuffmanTree.rootPixel.value = Convert.ToInt32(entry[0]);*/
                 // read dictionary entries
 
+                string[] entry;
+                Pixel leftPixel;
+                Pixel rightPixel;
+
+                bool r = false, g = false, b = false, root = false;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    entry = line.Split(',');
-                    leftPixel.value = Convert.ToInt32(entry[1]);
-                    leftPixel.frequency = 12;
-                    rightPixel.value = Convert.ToInt32(entry[2]);
-                    rightPixel.frequency = 11;
-                    HuffmanTree.treeMap.Add(Convert.ToInt32(entry[0]), new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
+                    if (line == "Red")
+                    {
+                        r = true;
+                        g = false;
+                        b = false;
+                        root = true;
+                        continue;
+                    }
+                    if (line == "Green")
+                    {
+                        r = false;
+                        g = true;
+                        b = false;
+                        root = true;
+                        continue;
+                    }
+                    if (line == "Blue")
+                    {
+                        r = false;
+                        g = false;
+                        b = true;
+                        root = true;
+                        continue;
+                    }
+                    if (r) { 
+                        entry = line.Split(',');
+                        leftPixel.value = Convert.ToInt32(entry[2]);
+                        leftPixel.frequency = 12;
+                        rightPixel.value = Convert.ToInt32(entry[1]);
+                        rightPixel.frequency = 11;
+                        HuffmanTree.treeMapR.Add(Convert.ToInt32(entry[0]), new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
+                        if(root)
+                        {
+                            HuffmanTree.rootPixelR.value = Convert.ToInt32(entry[0]);
+                            root = false;
+                        }
+                    }
+                    else if (g)
+                    {
+                        entry = line.Split(',');
+                        leftPixel.value = Convert.ToInt32(entry[2]);
+                        leftPixel.frequency = 12;
+                        rightPixel.value = Convert.ToInt32(entry[1]);
+                        rightPixel.frequency = 11;
+                        HuffmanTree.treeMapG.Add(Convert.ToInt32(entry[0]), new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
+                        if (root)
+                        {
+                            HuffmanTree.rootPixelG.value = Convert.ToInt32(entry[0]);
+                            root = false;
+                        }
+                    }
+                    else if (b) {
+                        entry = line.Split(',');
+                        leftPixel.value = Convert.ToInt32(entry[2]);
+                        leftPixel.frequency = 12;
+                        rightPixel.value = Convert.ToInt32(entry[1]);
+                        rightPixel.frequency = 11;
+                        HuffmanTree.treeMapB.Add(Convert.ToInt32(entry[0]), new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
+                        if (root)
+                        {
+                            HuffmanTree.rootPixelB.value = Convert.ToInt32(entry[0]);
+                            root = false;
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -321,17 +476,31 @@ namespace ImageEncryptCompress
                     string w = Convert.ToString(width);
                     writer.WriteLine(h + "," + w);
                     // write line
-                    writer.WriteLine("------");
+                    writer.WriteLine("Red");
                     
                     //Save Huffman Tree
                     string pixelFamily;
-                    foreach (var pixel in HuffmanTree.treeMap)
+                    foreach (var pixel in HuffmanTree.treeMapR)
                     {
                         pixelFamily = pixel.Key.ToString() + "," 
                             + pixel.Value.Item1.value.ToString() + ',' + pixel.Value.Item2.value.ToString();
                         writer.WriteLine(pixelFamily);
                     }
-                    
+                    writer.WriteLine("Green");
+                    foreach (var pixel in HuffmanTree.treeMapG)
+                    {
+                        pixelFamily = pixel.Key.ToString() + ","
+                            + pixel.Value.Item1.value.ToString() + ',' + pixel.Value.Item2.value.ToString();
+                        writer.WriteLine(pixelFamily);
+                    }
+                    writer.WriteLine("Blue");
+                    foreach (var pixel in HuffmanTree.treeMapB)
+                    {
+                        pixelFamily = pixel.Key.ToString() + ","
+                            + pixel.Value.Item1.value.ToString() + ',' + pixel.Value.Item2.value.ToString();
+                        writer.WriteLine(pixelFamily);
+                    }
+
                 }
 
                 Console.WriteLine("Data has been written to the file.");

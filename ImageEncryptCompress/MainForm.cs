@@ -55,7 +55,7 @@ namespace ImageEncryptCompress
             Compression.CompressImage(ImageMatrix);
         }
 
-        private void btnDecompress_Click(object sender, EventArgs e)
+        private  void btnDecompress_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
