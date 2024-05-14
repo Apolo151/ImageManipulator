@@ -80,14 +80,22 @@ namespace ImageEncryptCompress
         private void breakBtn_Click(object sender, EventArgs e)
         {
             // Initialize ImageBreaker object
-            ImageBreaker imageBreaker = new ImageBreaker(ImageMatrix);
+            ImageBreaker imageBreaker = new ImageBreaker();
 
-            /* Break the image encryption
-            int seedLength = int.Parse(seedLen.Text); ;
-            imageBreaker.BreakImage(seedLength);
-            ImageMatrix = imageBreaker.EncryptImage(ImageMatrix, seedLength, imageBreaker.bestTap, imageBreaker.bestLfsr, true);
-            ImageOperations.DisplayImage(ImageMatrix, pictureBox1);
-            */
+            //Break the image encryption
+            //now lets break encryption
+            int length = 8;
+            var (seed, tap) = imageBreaker.FindBestSeedAndTap(ImageMatrix, length);
+            Console.WriteLine(seed);
+            Console.WriteLine(tap);
+            ImageEncryption imageEncryption = new ImageEncryption(seed, false);
+            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, 8, tap, "");
+            ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
+
+            /*ImageBreaker imageBreaker = new ImageBreaker();
+            long d = imageBreaker.FrequencyDeviation(ImageMatrix);
+            Console.WriteLine(d);*/
+
         }
     }
 }

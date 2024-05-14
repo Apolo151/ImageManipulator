@@ -2,159 +2,130 @@ using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 
-namespace ImageEncryptCompress {
-    public class ImageBreaker {
-        private RGBPixel[,] encryptedImage;
-        private int imageSize;
-        private string lfsr = "";
-        public string bestLfsr = "";
-        public int bestTap = 0;
+namespace ImageEncryptCompress
+{
+    public class ImageBreaker
+    {
+        // Function to find the best seed and tap
+        public (string, int) FindBestSeedAndTap(RGBPixel[,] encryptedImage, int length)
+        {
+            long bestDeviation = 0;
+            string bestSeed = "00000000";
+            int bestTap = 0;
+            //O(2 ^ 8 * 8 * (N ^ 2 * K)
 
-        public ImageBreaker(RGBPixel[,] encryptedImage) {
-            try {
-                this.encryptedImage = encryptedImage;
-                imageSize = encryptedImage.GetLength(0) * encryptedImage.GetLength(1);
-            }
-            catch (Exception e) {
-                Console.WriteLine("An error occurred: " + e.Message);
-            }
-        }
+            string seed = "10001111";
+            for (int i = 0; i < (1 << 8); i++)
+            {
+                seed = "";
+                int num = 0;
+                for (int j = 7; j >= 0; j--)
+                {
+                    if (((1 << j) & i) != 0)
+                    {
+                        num |= (1 << j);
+                        seed += '1';
+                    }
+                    else
+                        seed += '0';
+                }
 
-        public void BreakImage(int seedLength) {
-            int maxDeviation = 0;
-
-            // Generate all possible seeds of length seedLength
-            List<string> seeds = new List<string>();
-            seeds = GeneratePossibleSeeds(seedLength);
-
-            int d = 0;
-            /*foreach (string seed in seeds) {
-                for (int tap = 1; tap <= seedLength; tap++) {
-                    i = tap;
-                    // Decrypt the image using the current seed and tap position
-                    lfsr = seed;
-                    RGBPixel[,] decryptedImage = DecryptImage(encryptedImage, seedLength, tap);
-
-                    // Calculate the frequency distribution of each color component
-                    Dictionary<byte, int>[] frequencies = CalculateColorFrequencies(decryptedImage);
-
-                    // Measure the deviation of the frequency distribution from the expected uniform distribution
-                    int deviation = MeasureDeviation(frequencies);
-
-                    // Track the seed and tap position combination with maximum deviation
-                    if (deviation > maxDeviation) {
-                        maxDeviation = deviation;
-                        bestLfsr = seed;
+                for (int tap = 0; tap < length; tap++)
+                {
+                    RGBPixel[,] decryptedImage = DecryptImage(seed, tap, encryptedImage);
+                    long deviation = FrequencyDeviation(decryptedImage);
+                    Console.WriteLine(deviation);
+                    if (deviation >= bestDeviation)
+                    {
+                        bestDeviation = deviation;
+                        bestSeed = seed;
                         bestTap = tap;
                     }
-
-                    //   Console.WriteLine(seed);
-                }
-            }*/
-            for (int i = 0; i < 6000080000; i++) {
-                d = i;
-            }
-                    Console.WriteLine(encryptedImage.GetLength(0) * encryptedImage.GetLength(1));
-            
-        }
-
-
-        // Generate all possible seeds of length seedLength
-        private List<string> GeneratePossibleSeeds(int seedLength) {
-            // Implement a method to generate all possible seeds of length seedLength
-            // For demonstration purposes, we'll generate all binary strings of length seedLength
-            int numSeeds = (int)Math.Pow(2, seedLength);
-            List<string> ret = new List<string>();
-
-            for (int i = 0; i < (1 << seedLength); i++)
-                ret.Add(toBinary(i, seedLength));
-
-            return ret;
-        }
-
-        private string toBinary(int num, int len) {
-            string ret = "";
-            for (int bit = len - 1; bit >= 0; bit--) {
-                if (((1 << bit) & num) != 0)
-                    ret += '1';
-                else
-                    ret += '0';
-            }
-
-            return ret;
-        }
-
-        // Decrypt the image using the current seed and tap position
-        private RGBPixel[,] DecryptImage(RGBPixel[,] ImageMatrix, int k, int tapPosition) {
-            // Iterate through each pixel of the image
-            try {
-                for (int y = 0; y < ImageMatrix.GetLength(0); y++) {
-                    for (int x = 0; x < ImageMatrix.GetLength(1); x++) {
-                        // Extract the RGB components of the pixel
-                        byte red = ImageMatrix[y, x].red;
-                        byte green = ImageMatrix[y, x].green;
-                        byte blue = ImageMatrix[y, x].blue;
-
-                        // Encrypt each color component using the LFSR
-                        red ^= GenerateKBits(ref lfsr, tapPosition, k);
-                        green ^= GenerateKBits(ref lfsr, tapPosition, k);
-                        blue ^= GenerateKBits(ref lfsr, tapPosition, k);
-
-                        // Update the pixel with the encrypted color
-                        ImageMatrix[y, x] = new RGBPixel { red = red, green = green, blue = blue };
-                    }
-                }
-
-                return ImageMatrix;
-            }
-
-            catch (Exception e) {
-                Console.WriteLine("An error occurred: " + e.Message);
-                return ImageMatrix;
-            }
-        }
-
-        // Calculate the frequency distribution of each color component
-        private Dictionary<byte, int>[] CalculateColorFrequencies(RGBPixel[,] image) {
-            Dictionary<byte, int>[] frequencies =
-                { new Dictionary<byte, int>(), new Dictionary<byte, int>(), new Dictionary<byte, int>() };
-
-            foreach (RGBPixel pixel in image) {
-                frequencies[0][pixel.red] = frequencies[0].ContainsKey(pixel.red) ? frequencies[0][pixel.red] + 1 : 1;
-                frequencies[1][pixel.green] =
-                    frequencies[1].ContainsKey(pixel.green) ? frequencies[1][pixel.green] + 1 : 1;
-                frequencies[2][pixel.blue] =
-                    frequencies[2].ContainsKey(pixel.blue) ? frequencies[2][pixel.blue] + 1 : 1;
-            }
-
-            return frequencies;
-        }
-
-        // Measure the deviation of the frequency distribution from the expected uniform distribution
-        private int MeasureDeviation(Dictionary<byte, int>[] frequencies) {
-            int totalDeviation = 0;
-
-            foreach (Dictionary<byte, int> freqDict in frequencies) {
-                foreach (var pair in freqDict) {
-                    totalDeviation += Math.Abs(pair.Value - imageSize / 256);
                 }
             }
 
-            return totalDeviation;
+            return (bestSeed, bestTap);
         }
 
-        // Generate k bits using the LFSR algorithm
-        private byte GenerateKBits(ref string lfsr, int tapPosition, int k) {
+
+        // Function to calculate frequency deviation from 128
+        public long FrequencyDeviation(RGBPixel[,] image)
+        {
+            int[,] frequencies = new int[3, 256];
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 256; j++)
+                {
+                    frequencies[i, j] = 0;
+                }
+            }
+            double ret = 0;
+
+            foreach (RGBPixel p in image)
+            {
+                frequencies[0, p.red]++;
+                frequencies[1, p.green]++;
+                frequencies[2, p.blue]++;
+            }
+
+            //Now let's calculate deviation 
+            double devG = 0, devR = 0, devB = 0;
+            for (int i = 0; i < 256; i++)
+            {
+                devR += Math.Abs(128 - frequencies[0, i]);
+                devG += Math.Abs(128 - frequencies[1, i]);
+                devB += Math.Abs(128 - frequencies[2, i]);
+            }
+            devR /= 256;
+            devB /= 256;
+            devG /= 256;
+            ret = (Math.Abs(devR - 128) + Math.Abs(devG - 128) + Math.Abs(devB - 128)) / 3.0;
+
+            return (long)ret;
+        }
+
+        RGBPixel[,] DecryptImage(string seed, int tap, RGBPixel[,] encryptedImage)
+        {
+            RGBPixel[,] decryptedImage = new RGBPixel[encryptedImage.GetLength(0), encryptedImage.GetLength(1)];
+            for (int y = 0; y < encryptedImage.GetLength(0); y++)
+            {
+                for (int x = 0; x < encryptedImage.GetLength(1); x++)
+                {
+                    // Extract the RGB components of the pixel
+                    byte red = encryptedImage[y, x].red;
+                    byte green = encryptedImage[y, x].green;
+                    byte blue = encryptedImage[y, x].blue;
+
+                    // Encrypt each color component using the LFSR
+                    red ^= GenerateKBits(ref seed, tap, 8);
+                    green ^= GenerateKBits(ref seed, tap, 8);
+                    blue ^= GenerateKBits(ref seed, tap, 8);
+
+                    // Update the pixel with the encrypted color
+                    decryptedImage[y, x] = new RGBPixel { red = red, green = green, blue = blue };
+                }
+            }
+
+            return decryptedImage;
+        }
+
+        // Generate k bits using the LFSR algorithm 
+        public byte GenerateKBits(ref string lfsr, int tapPosition, int k)
+        {
+            //Console.Write(lfsr, ' ');
+            int n = lfsr.Length;
             byte result = 0;
-            for (int i = 0; i < k; i++) {
+            for (int i = 0; i < k; i++)
+            {
                 // Calculate the XOR result using the tap position
-                if (tapPosition >= lfsr.Length)
-                    break;
-                int lsb = lfsr[0] - '0';
-                int tp = lfsr[tapPosition] - '0';
-                int xorResult = lsb ^ tp;
+
+                int msb = lfsr[0] - '0';
+                int tp = lfsr[n - 1 - tapPosition] - '0';
+                int xorResult = msb ^ tp;
+
 
                 // Shift the LFSR one position to the left  
                 lfsr = lfsr.Substring(1) + (char)(xorResult + '0');
@@ -163,7 +134,6 @@ namespace ImageEncryptCompress {
                 result = (byte)((result << 1) | xorResult);
             }
 
-            //Console.WriteLine(result);
             return result;
         }
     }
