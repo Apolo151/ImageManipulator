@@ -60,7 +60,7 @@ namespace ImageEncryptCompress
             compressionRatioBox.Text = Math.Round(compressionRatio, 5).ToString();
         }
 
-        private void btnDecompress_Click(object sender, EventArgs e)
+        private async void btnDecompress_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -68,7 +68,7 @@ namespace ImageEncryptCompress
                 //Open the browsed image and display it
                 string OpenedFilePath = openFileDialog1.FileName;
                 string TreePath = Compression.constructTreePath(OpenedFilePath);
-                ImageMatrix = Compression.DecompressImage(OpenedFilePath, TreePath);
+                ImageMatrix = await Compression.DecompressImage(OpenedFilePath, TreePath);
                 ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
             }
         }
