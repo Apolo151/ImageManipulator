@@ -76,31 +76,31 @@ namespace ImageEncryptCompress
             return;
         }
         //
-        public static RGBPixel[,] DecompressImage(string imagePath, string treePath)
+        public static async Task<RGBPixel[,]> DecompressImage(string imagePath, string treePath)
         {
-            string compressedCodes = ReadBinaryFile(imagePath);
-            string[] dimensions = ReadTreeFile(treePath);
-            //Getting parameters from old image
+            string compressedCodes = await ReadBinaryFile(imagePath);
+            string[] dimensions = await ReadTreeFile(treePath);
+            // Getting parameters from the old image
             int height = Convert.ToInt32(dimensions[0]);
             int width = Convert.ToInt32(dimensions[1]);
 
-            //intializing new image to hold the compressed values
+            // Initializing a new image to hold the compressed values
             RGBPixel[,] recoveredImage = new RGBPixel[height, width];
 
             int bit = 0;
-            //iterating over each pixel in the image and getting its value
+            // Iterating over each pixel in the image and getting its value
             for (int i = 0; i < height; i++)
             {
                 for (int j = 0; j < width; j++)
                 {
-                    //intialize it with root pixel on huffman tree
+                    // Initializing it with the root pixel on the Huffman tree
                     for (int c = 0; c < 3; c++)
                     {
                         if (c == 0)
                         {
                             Pixel pixel = HuffmanTree.rootPixelR;
-                            //looping over each bit until we find a leaf node
-                            for (; bit < compressedCodes.Count() - padding; bit++)
+                            // Looping over each bit until we find a leaf node
+                            for (; bit < compressedCodes.Length - padding; bit++)
                             {
                                 if (compressedCodes[bit] == '0')
                                 {
@@ -110,8 +110,8 @@ namespace ImageEncryptCompress
                                 {
                                     pixel = HuffmanTree.treeMapR[pixel.value].Item2;
                                 }
-                                //if leaf node is found assign the value to the image and break;
-                                if (HuffmanTree.treeMapR.ContainsKey(pixel.value) == false)
+                                // If leaf node is found, assign the value to the image and break;
+                                if (!HuffmanTree.treeMapR.ContainsKey(pixel.value))
                                 {
                                     recoveredImage[i, j].red = Convert.ToByte(pixel.value);
                                     bit++;
@@ -119,11 +119,11 @@ namespace ImageEncryptCompress
                                 }
                             }
                         }
-                        else if(c == 1)
+                        else if (c == 1)
                         {
                             Pixel pixel = HuffmanTree.rootPixelG;
-                            //looping over each bit until we find a leaf node
-                            for (; bit < compressedCodes.Count() - padding; bit++)
+                            // Looping over each bit until we find a leaf node
+                            for (; bit < compressedCodes.Length - padding; bit++)
                             {
                                 if (compressedCodes[bit] == '0')
                                 {
@@ -133,23 +133,20 @@ namespace ImageEncryptCompress
                                 {
                                     pixel = HuffmanTree.treeMapG[pixel.value].Item2;
                                 }
-                                //if leaf node is found assign the value to the image and break;
-                                if (HuffmanTree.treeMapG.ContainsKey(pixel.value) == false)
+                                // If leaf node is found, assign the value to the image and break;
+                                if (!HuffmanTree.treeMapG.ContainsKey(pixel.value))
                                 {
                                     recoveredImage[i, j].green = Convert.ToByte(pixel.value);
-                                    //Console.WriteLine(pixel.value);
-                                    //Console.WriteLine(recoveredImage[i, j].green);
-
                                     bit++;
                                     break;
                                 }
                             }
                         }
-                        else if(c == 2)
+                        else if (c == 2)
                         {
                             Pixel pixel = HuffmanTree.rootPixelB;
-                            //looping over each bit until we find a leaf node
-                            for (; bit < compressedCodes.Count() - padding; bit++)
+                            // Looping over each bit until we find a leaf node
+                            for (; bit < compressedCodes.Length - padding; bit++)
                             {
                                 if (compressedCodes[bit] == '0')
                                 {
@@ -159,8 +156,8 @@ namespace ImageEncryptCompress
                                 {
                                     pixel = HuffmanTree.treeMapB[pixel.value].Item2;
                                 }
-                                //if leaf node is found assign the value to the image and break;
-                                if (HuffmanTree.treeMapB.ContainsKey(pixel.value) == false)
+                                // If leaf node is found, assign the value to the image and break;
+                                if (!HuffmanTree.treeMapB.ContainsKey(pixel.value))
                                 {
                                     recoveredImage[i, j].blue = Convert.ToByte(pixel.value);
                                     bit++;
@@ -171,9 +168,9 @@ namespace ImageEncryptCompress
                     }
                 }
             }
-
             return recoveredImage;
         }
+
         /// <summary>
         /// Decompress the image's 2D color array using reverse huffman encoding
         /// </summary>
@@ -324,17 +321,24 @@ namespace ImageEncryptCompress
             }
         }
         //
-        public static string ReadBinaryFile(string filePath)
+        public static async Task<string> ReadBinaryFile(string filePath)
         {
             string compressedCodes="";
             try
             {
                 // Read all bytes from the file
-                byte[] bytes = File.ReadAllBytes(filePath);
-                //looping over each byte and converting it to string;
-                foreach(byte b in bytes)
+                using (FileStream sourceStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true))
                 {
-                    compressedCodes += Convert.ToString(b, 2).PadLeft(8, '0');
+                    // Initialize a byte array to hold the file content
+                    byte[] bytes = new byte[sourceStream.Length];
+
+                    // Read the file asynchronously
+                    await sourceStream.ReadAsync(bytes, 0, (int)sourceStream.Length);
+                    //looping over each byte and converting it to string;
+                    foreach (byte b in bytes)
+                    {
+                        compressedCodes += Convert.ToString(b, 2).PadLeft(8, '0');
+                    }
                 }
             }
             catch (Exception e)
@@ -345,7 +349,7 @@ namespace ImageEncryptCompress
             return compressedCodes;
         }
         //
-        public static string[] ReadTreeFile(string filePath)
+        public static async Task<string[]> ReadTreeFile(string filePath)
         {
             string[] dimensions;
             // Initialize the StreamReader
@@ -355,8 +359,8 @@ namespace ImageEncryptCompress
                 reader = new StreamReader(filePath);
                 string line;
                 // read height and width
-                line = reader.ReadLine();
-                if(line == null)
+                line = await reader.ReadLineAsync();
+                if (line == null)
                 {
                     throw new Exception("Image dimensions are not present in file");
                 }
