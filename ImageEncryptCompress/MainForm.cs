@@ -36,21 +36,11 @@ namespace ImageEncryptCompress
 
             string password = "eP$^6trvdsf2@2232jfkdlfs";
 
-            int seedLength = int.Parse(txtSeedLen.Text); // set to 20
+            int seedPos = int.Parse(txtSeedpos.Text); // set to 20
             int tapPosition = (int)nudTapPos.Value; // set to 11
             ImageEncryption imageEncryption = new ImageEncryption(password);
-            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedLength, tapPosition, "");
+            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedPos, tapPosition, "");
             ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
-
-            /* Initialize ImageBreaker object
-            ImageBreaker imageBreaker = new ImageBreaker(ImageMatrix);
-
-            /* Break the image encryption
-            int seedLength = 8; // Example seed length
-            imageBreaker.BreakImage(seedLength);
-            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedLength, imageBreaker.bestTap, imageBreaker.bestLfsr, true);
-            ImageOperations.DisplayImage(ImageMatrix, pictureBox1);
-            */
         }
 
         private void btnCompress_Click(object sender, EventArgs e)
@@ -71,6 +61,33 @@ namespace ImageEncryptCompress
                 ImageMatrix = await Compression.DecompressImage(OpenedFilePath, TreePath);
                 ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
             }
+        }
+
+        private void forwardBtn_Click(object sender, EventArgs e)
+        {
+            // Encrypt Image
+
+            // Compress Image
+        }
+
+        private void backwardBtn_Click(object sender, EventArgs e)
+        {
+            // Decomrpess Image
+
+            // Decrypt Image
+        }
+
+        private void breakBtn_Click(object sender, EventArgs e)
+        {
+            // Initialize ImageBreaker object
+            ImageBreaker imageBreaker = new ImageBreaker(ImageMatrix);
+
+            /* Break the image encryption
+            int seedLength = int.Parse(seedLen.Text); ;
+            imageBreaker.BreakImage(seedLength);
+            ImageMatrix = imageBreaker.EncryptImage(ImageMatrix, seedLength, imageBreaker.bestTap, imageBreaker.bestLfsr, true);
+            ImageOperations.DisplayImage(ImageMatrix, pictureBox1);
+            */
         }
     }
 }
