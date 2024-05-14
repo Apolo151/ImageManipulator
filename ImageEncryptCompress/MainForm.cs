@@ -72,5 +72,25 @@ namespace ImageEncryptCompress
                 ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
             }
         }
+
+        private void forwardBtn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void backwardBtn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void breakBtn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
