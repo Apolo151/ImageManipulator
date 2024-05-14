@@ -42,7 +42,7 @@ namespace ImageEncryptCompress
             this.txtWidth = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.txtSeedLen = new System.Windows.Forms.TextBox();
+            this.txtSeedpos = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnDecompress = new System.Windows.Forms.Button();
@@ -51,7 +51,7 @@ namespace ImageEncryptCompress
             this.backwardBtn = new System.Windows.Forms.Button();
             this.forwardBtn = new System.Windows.Forms.Button();
             this.breakBtn = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.seedLen = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -232,15 +232,15 @@ namespace ImageEncryptCompress
             this.label6.TabIndex = 13;
             this.label6.Text = "Height";
             // 
-            // txtSeedLen
+            // txtSeedpos
             // 
-            this.txtSeedLen.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSeedLen.Location = new System.Drawing.Point(1288, 568);
-            this.txtSeedLen.Margin = new System.Windows.Forms.Padding(4);
-            this.txtSeedLen.Name = "txtSeedLen";
-            this.txtSeedLen.Size = new System.Drawing.Size(75, 27);
-            this.txtSeedLen.TabIndex = 14;
-            this.txtSeedLen.Text = "20";
+            this.txtSeedpos.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSeedpos.Location = new System.Drawing.Point(1288, 568);
+            this.txtSeedpos.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSeedpos.Name = "txtSeedpos";
+            this.txtSeedpos.Size = new System.Drawing.Size(75, 27);
+            this.txtSeedpos.TabIndex = 14;
+            this.txtSeedpos.Text = "20";
             // 
             // panel1
             // 
@@ -333,15 +333,15 @@ namespace ImageEncryptCompress
             this.breakBtn.UseVisualStyleBackColor = true;
             this.breakBtn.Click += new System.EventHandler(this.breakBtn_Click);
             // 
-            // textBox1
+            // seedLen
             // 
-            this.textBox1.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(1321, 142);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(4);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(46, 27);
-            this.textBox1.TabIndex = 25;
-            this.textBox1.Text = "20";
+            this.seedLen.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.seedLen.Location = new System.Drawing.Point(1321, 142);
+            this.seedLen.Margin = new System.Windows.Forms.Padding(4);
+            this.seedLen.Name = "seedLen";
+            this.seedLen.Size = new System.Drawing.Size(46, 27);
+            this.seedLen.TabIndex = 25;
+            this.seedLen.Text = "20";
             // 
             // label8
             // 
@@ -370,7 +370,7 @@ namespace ImageEncryptCompress
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1394, 664);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.seedLen);
             this.Controls.Add(this.compressionRatioBox);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label10);
@@ -381,7 +381,7 @@ namespace ImageEncryptCompress
             this.Controls.Add(this.btnDecompress);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.txtSeedLen);
+            this.Controls.Add(this.txtSeedpos);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.txtWidth);
@@ -426,7 +426,7 @@ namespace ImageEncryptCompress
         private System.Windows.Forms.TextBox txtWidth;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox txtSeedLen;
+        private System.Windows.Forms.TextBox txtSeedpos;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button btnDecompress;
@@ -435,7 +435,7 @@ namespace ImageEncryptCompress
         private System.Windows.Forms.Button backwardBtn;
         private System.Windows.Forms.Button forwardBtn;
         private System.Windows.Forms.Button breakBtn;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox seedLen;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label10;
     }
