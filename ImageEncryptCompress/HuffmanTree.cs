@@ -96,8 +96,8 @@ namespace ImageEncryptCompress
             }
 
             // recurse
-            traverseTree(treeMap[pixel.value].Item1,currentCode+'1', ref pixelCodes, treeMap);
-            traverseTree(treeMap[pixel.value].Item2,currentCode+'0', ref pixelCodes, treeMap);
+            traverseTree(treeMap[pixel.value].Item1,currentCode+'0', ref pixelCodes, treeMap);
+            traverseTree(treeMap[pixel.value].Item2,currentCode+'1', ref pixelCodes, treeMap);
             return;
         }
         //

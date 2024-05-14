@@ -137,6 +137,7 @@ namespace ImageEncryptCompress
                                 if (!HuffmanTree.treeMapG.ContainsKey(pixel.value))
                                 {
                                     recoveredImage[i, j].green = Convert.ToByte(pixel.value);
+                                    Console.WriteLine(pixel.value);
                                     bit++;
                                     break;
                                 }
@@ -191,17 +192,17 @@ namespace ImageEncryptCompress
                 {
                     if (!redFrequency.ContainsKey(image[i, j].red))
                     {
-                        redFrequency[Convert.ToInt16(image[i, j].red)] = 0;
+                        redFrequency[Convert.ToInt32(image[i, j].red)] = 0;
                     }
                     redFrequency[image[i, j].red]++;
                     if (!greenFrequency.ContainsKey(image[i, j].green))
                     {
-                        greenFrequency[Convert.ToInt16(image[i, j].green)] = 0;
+                        greenFrequency[Convert.ToInt32(image[i, j].green)] = 0;
                     }
                     greenFrequency[image[i, j].green]++;
                     if (!blueFrequency.ContainsKey(image[i, j].blue))
                     {
-                        blueFrequency[Convert.ToInt16(image[i, j].blue)] = 0;
+                        blueFrequency[Convert.ToInt32(image[i, j].blue)] = 0;
                     }
                     blueFrequency[image[i, j].blue]++;
                 }
@@ -411,43 +412,33 @@ namespace ImageEncryptCompress
                     }
                     if (r) { 
                         entry = line.Split(',');
-                        leftPixel.value = Convert.ToInt32(entry[2]);
+                        leftPixel.value = Convert.ToInt32(entry[1]);
                         leftPixel.frequency = 12;
-                        rightPixel.value = Convert.ToInt32(entry[1]);
+                        rightPixel.value = Convert.ToInt32(entry[2]);
                         rightPixel.frequency = 11;
                         HuffmanTree.treeMapR.Add(Convert.ToInt32(entry[0]), new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
-                        if(root)
-                        {
-                            HuffmanTree.rootPixelR.value = Convert.ToInt32(entry[0]);
-                            root = false;
-                        }
+                        HuffmanTree.rootPixelR.value = Convert.ToInt32(entry[0]);
                     }
                     else if (g)
                     {
                         entry = line.Split(',');
-                        leftPixel.value = Convert.ToInt32(entry[2]);
+                        leftPixel.value = Convert.ToInt32(entry[1]);
                         leftPixel.frequency = 12;
-                        rightPixel.value = Convert.ToInt32(entry[1]);
+                        rightPixel.value = Convert.ToInt32(entry[2]);
                         rightPixel.frequency = 11;
                         HuffmanTree.treeMapG.Add(Convert.ToInt32(entry[0]), new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
-                        if (root)
-                        {
-                            HuffmanTree.rootPixelG.value = Convert.ToInt32(entry[0]);
-                            root = false;
-                        }
+                        HuffmanTree.rootPixelG.value = Convert.ToInt32(entry[0]);
+
                     }
                     else if (b) {
                         entry = line.Split(',');
-                        leftPixel.value = Convert.ToInt32(entry[2]);
+                        leftPixel.value = Convert.ToInt32(entry[1]);
                         leftPixel.frequency = 12;
-                        rightPixel.value = Convert.ToInt32(entry[1]);
+                        rightPixel.value = Convert.ToInt32(entry[2]);
                         rightPixel.frequency = 11;
                         HuffmanTree.treeMapB.Add(Convert.ToInt32(entry[0]), new Tuple<Pixel, Pixel>(leftPixel, rightPixel));
-                        if (root)
-                        {
-                            HuffmanTree.rootPixelB.value = Convert.ToInt32(entry[0]);
-                            root = false;
-                        }
+                        HuffmanTree.rootPixelB.value = Convert.ToInt32(entry[0]);
+                       
                     }
                 }
             }
@@ -486,21 +477,21 @@ namespace ImageEncryptCompress
                     string pixelFamily;
                     foreach (var pixel in HuffmanTree.treeMapR)
                     {
-                        pixelFamily = pixel.Key.ToString() + "," 
+                        pixelFamily = pixel.Key.ToString() + ',' 
                             + pixel.Value.Item1.value.ToString() + ',' + pixel.Value.Item2.value.ToString();
                         writer.WriteLine(pixelFamily);
                     }
                     writer.WriteLine("Green");
                     foreach (var pixel in HuffmanTree.treeMapG)
                     {
-                        pixelFamily = pixel.Key.ToString() + ","
+                        pixelFamily = pixel.Key.ToString() + ','
                             + pixel.Value.Item1.value.ToString() + ',' + pixel.Value.Item2.value.ToString();
                         writer.WriteLine(pixelFamily);
                     }
                     writer.WriteLine("Blue");
                     foreach (var pixel in HuffmanTree.treeMapB)
                     {
-                        pixelFamily = pixel.Key.ToString() + ","
+                        pixelFamily = pixel.Key.ToString() + ','
                             + pixel.Value.Item1.value.ToString() + ',' + pixel.Value.Item2.value.ToString();
                         writer.WriteLine(pixelFamily);
                     }
