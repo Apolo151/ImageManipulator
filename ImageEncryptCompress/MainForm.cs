@@ -36,16 +36,21 @@ namespace ImageEncryptCompress
 
         private void btnEncryptDecrypt_Click(object sender, EventArgs e)
         {
-
-            string password = "eP$^6trvdsf2@2232jfkdlfs";
-            int k = 5;
-
-            int seedPos = int.Parse(txtSeedpos.Text); // set to 20
+            bool convert = false;
+            string seedPos = (txtSeedpos.Text); // set to 20
             int tapPosition = (int)nudTapPos.Value; // set to 11
-            ImageEncryption imageEncryption = new ImageEncryption(password);
-            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, k, tapPosition, "");
+            foreach(char c in seedPos)
+            {
+                if(c != '0' && c != '1')
+                {
+                    convert = true;
+                    break;
+                }
+            }
+            ImageEncryption imageEncryption = new ImageEncryption(seedPos, convert);
+            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedPos.Length, tapPosition, "");
             ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
-            //
+
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
             saveFileDialog1.Filter = "bmp files (*.bmp)|*.bmp|All files (*.*)|*.*";
             saveFileDialog1.RestoreDirectory = true;
@@ -82,11 +87,10 @@ namespace ImageEncryptCompress
             // Encrypt Image
             string password = "eP$^6trvdsf2@2232jfkdlfs";
             password = "00101";
-            int k = 3;
             string seedPos = txtSeedpos.Text; // set to 20
             int tapPosition = (int)nudTapPos.Value; // set to 11
             ImageEncryption imageEncryption = new ImageEncryption(seedPos);
-            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, k, tapPosition, "");
+            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix,seedPos.Length, tapPosition, "");
             ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
             //
             // Compress Image

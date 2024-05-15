@@ -99,9 +99,9 @@ namespace ImageEncryptCompress
                     byte blue = encryptedImage[y, x].blue;
 
                     // Encrypt each color component using the LFSR
-                    red ^= GenerateKBits(ref seed, tap, 8);
-                    green ^= GenerateKBits(ref seed, tap, 8);
-                    blue ^= GenerateKBits(ref seed, tap, 8);
+                    red ^= GenerateKBits(ref seed, tap, seed.Length);
+                    green ^= GenerateKBits(ref seed, tap, seed.Length);
+                    blue ^= GenerateKBits(ref seed, tap, seed.Length);
 
                     // Update the pixel with the encrypted color
                     decryptedImage[y, x] = new RGBPixel { red = red, green = green, blue = blue };
