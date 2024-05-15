@@ -98,10 +98,10 @@ namespace ImageEncryptCompress
             //Console.Write(lfsr, ' ');
             int n = lfsr.Length;
             byte result = 0;
+            int x = lfsr[0];
             for (int i = 0; i < k; i++)
             {
                 // Calculate the XOR result using the tap position
-
                 int msb = lfsr[0] - '0';
                 int tp = lfsr[n - 1 - tapPosition] - '0';
                 int xorResult = msb ^ tp;
