@@ -37,11 +37,12 @@ namespace ImageEncryptCompress
         {
 
             string password = "eP$^6trvdsf2@2232jfkdlfs";
+            int k = 5;
 
             int seedPos = int.Parse(txtSeedpos.Text); // set to 20
             int tapPosition = (int)nudTapPos.Value; // set to 11
             ImageEncryption imageEncryption = new ImageEncryption(password);
-            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedPos, tapPosition, "");
+            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, k, tapPosition, "");
             ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
         }
 
@@ -71,10 +72,11 @@ namespace ImageEncryptCompress
             stopWatch.Start();
             // Encrypt Image
             string password = "eP$^6trvdsf2@2232jfkdlfs";
+            int k = 5;
             int seedPos = int.Parse(txtSeedpos.Text); // set to 20
             int tapPosition = (int)nudTapPos.Value; // set to 11
             ImageEncryption imageEncryption = new ImageEncryption(password);
-            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedPos, tapPosition, "");
+            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, k, tapPosition, "");
             ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
             //
             // Compress Image
@@ -109,10 +111,11 @@ namespace ImageEncryptCompress
 
             // Decrypt Image
             string password = "eP$^6trvdsf2@2232jfkdlfs";
+            int k = 5;
             int seedPos = int.Parse(txtSeedpos.Text); // set to 20
             int tapPosition = (int)nudTapPos.Value; // set to 11
             ImageEncryption imageEncryption = new ImageEncryption(password);
-            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedPos, tapPosition, "");
+            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, k, tapPosition, "");
             ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
             //
             stopWatch.Stop();
