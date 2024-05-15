@@ -84,12 +84,12 @@ namespace ImageEncryptCompress
 
             //Break the image encryption
             //now lets break encryption
-            int length = 8;
+            int length = int.Parse(seedLen.Text);
             var (seed, tap) = imageBreaker.FindBestSeedAndTap(ImageMatrix, length);
             Console.WriteLine(seed);
             Console.WriteLine(tap);
             ImageEncryption imageEncryption = new ImageEncryption(seed, false);
-            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, 8, tap, "");
+            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, length, tap, "");
             ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
 
             /*ImageBreaker imageBreaker = new ImageBreaker();

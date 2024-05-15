@@ -15,10 +15,9 @@ namespace ImageEncryptCompress
             long bestDeviation = 0;
             string bestSeed = "00000000";
             int bestTap = 0;
-            //O(2 ^ 8 * 8 * (N ^ 2 * K)
 
             string seed = "10001111";
-            for (int i = 0; i < (1 << 8); i++)
+            for (int i = 0; i < (1 << length); i++)
             {
                 seed = "";
                 int num = 0;
