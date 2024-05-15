@@ -179,7 +179,7 @@ namespace ImageEncryptCompress
             // 
             this.nudTapPos.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.nudTapPos.Increment = new decimal(new int[] {
-            2,
+            1,
             0,
             0,
             0});
@@ -191,7 +191,7 @@ namespace ImageEncryptCompress
             0,
             0});
             this.nudTapPos.Minimum = new decimal(new int[] {
-            7,
+            0,
             0,
             0,
             0});
@@ -494,4 +494,3 @@ namespace ImageEncryptCompress
         private System.Windows.Forms.Label label11;
     }
 }
-
