@@ -21,9 +21,9 @@ namespace ImageEncryptCompress
     public class Compression
     {
         // compressed image file path
-        public static string saveImagePath = "../../../compressionTests/results/res1.txt";
+        public static string saveImagePath = "../../../results/compressed/res.txt";
         //
-        public static string pixelCodesPath = "../../../compressionTests/results/pixelCodes.txt";
+        public static string pixelCodesPath = "../../../results/compressed/pixelCodes.txt";
         // frequency maps for each image channel
         public static Dictionary<int, int> redFrequency = new Dictionary<int, int>();
         public static Dictionary<int, int> greenFrequency = new Dictionary<int, int>();
