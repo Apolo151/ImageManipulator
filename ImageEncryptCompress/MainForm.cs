@@ -81,10 +81,11 @@ namespace ImageEncryptCompress
             stopWatch.Start();
             // Encrypt Image
             string password = "eP$^6trvdsf2@2232jfkdlfs";
-            int k = 5;
-            int seedPos = int.Parse(txtSeedpos.Text); // set to 20
+            password = "00101";
+            int k = 3;
+            string seedPos = txtSeedpos.Text; // set to 20
             int tapPosition = (int)nudTapPos.Value; // set to 11
-            ImageEncryption imageEncryption = new ImageEncryption(password);
+            ImageEncryption imageEncryption = new ImageEncryption(seedPos);
             ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, k, tapPosition, "");
             ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
             //
