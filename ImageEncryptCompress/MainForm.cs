@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace ImageEncryptCompress
@@ -65,16 +67,38 @@ namespace ImageEncryptCompress
 
         private void forwardBtn_Click(object sender, EventArgs e)
         {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             // Encrypt Image
-
+            Thread.Sleep(3000);
             // Compress Image
+            stopWatch.Stop();
+            // Get the elapsed time as a TimeSpan value.
+            TimeSpan ts = stopWatch.Elapsed;
+
+            // Format and display the TimeSpan value.
+            string elapsedTime = String.Format("{0}:{1:00}",
+                ts.Minutes, ts.Seconds);
+
+            textBox1.Text = elapsedTime;
         }
 
         private void backwardBtn_Click(object sender, EventArgs e)
         {
-            // Decomrpess Image
-
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            // DecompressImage
             // Decrypt Image
+            Thread.Sleep(3000); 
+            stopWatch.Stop();
+            // Get the elapsed time as a TimeSpan value.
+            TimeSpan ts = stopWatch.Elapsed;
+
+            // Format and display the TimeSpan value.
+            string elapsedTime = String.Format("{0}:{1:00}",
+                ts.Minutes, ts.Seconds);
+
+            textBox2.Text = elapsedTime;
         }
 
         private void breakBtn_Click(object sender, EventArgs e)
