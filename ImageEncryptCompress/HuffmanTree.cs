@@ -86,7 +86,7 @@ namespace ImageEncryptCompress
             return;
         }
         //
-        public static void traverseTree(Pixel pixel, string currentCode, ref Dictionary<Pixel, string> pixelCodes, Dictionary<int, Tuple<Pixel, Pixel>> treeMap)
+        public static void traverseTree(Pixel pixel, string currentCode, ref Dictionary<Pixel, string> pixelCodes, ref Dictionary<int, Tuple<Pixel, Pixel>> treeMap)
         {
             // base: if key is doesn't have a value -> node is a leaf node
             if (treeMap.ContainsKey(pixel.value) == false)
@@ -96,8 +96,8 @@ namespace ImageEncryptCompress
             }
 
             // recurse
-            traverseTree(treeMap[pixel.value].Item1, currentCode + '0', ref pixelCodes, treeMap);
-            traverseTree(treeMap[pixel.value].Item2, currentCode + '1', ref pixelCodes, treeMap);
+            traverseTree(treeMap[pixel.value].Item1, currentCode + '0', ref pixelCodes, ref treeMap);
+            traverseTree(treeMap[pixel.value].Item2, currentCode + '1', ref pixelCodes, ref treeMap);
             return;
         }
         //
