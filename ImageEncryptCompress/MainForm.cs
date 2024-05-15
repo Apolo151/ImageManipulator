@@ -47,7 +47,7 @@ namespace ImageEncryptCompress
 
         private void btnCompress_Click(object sender, EventArgs e)
         {
-            // return compression ratio
+            // returns compression ratio
             float compressionRatio = Compression.CompressImage(ImageMatrix);
             compressionRatioBox.Text = Math.Round(compressionRatio, 5).ToString();
         }
@@ -70,8 +70,16 @@ namespace ImageEncryptCompress
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             // Encrypt Image
-            Thread.Sleep(3000);
+            string password = "eP$^6trvdsf2@2232jfkdlfs";
+            int seedPos = int.Parse(txtSeedpos.Text); // set to 20
+            int tapPosition = (int)nudTapPos.Value; // set to 11
+            ImageEncryption imageEncryption = new ImageEncryption(password);
+            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedPos, tapPosition, "");
+            ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
             // Compress Image
+            float compressionRatio = Compression.CompressImage(ImageMatrix);
+            compressionRatioBox.Text = Math.Round(compressionRatio, 5).ToString();
+            //
             stopWatch.Stop();
             // Get the elapsed time as a TimeSpan value.
             TimeSpan ts = stopWatch.Elapsed;
@@ -83,13 +91,29 @@ namespace ImageEncryptCompress
             textBox1.Text = elapsedTime;
         }
 
-        private void backwardBtn_Click(object sender, EventArgs e)
+        private async void backwardBtn_Click(object sender, EventArgs e)
         {
             Stopwatch stopWatch = new Stopwatch();
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
             stopWatch.Start();
             // DecompressImage
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                //Open the browsed image and display it
+                string OpenedFilePath = openFileDialog1.FileName;
+                string TreePath = Compression.constructTreePath(OpenedFilePath);
+                ImageMatrix = await Compression.DecompressImage(OpenedFilePath, TreePath);
+                ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
+            }
+
             // Decrypt Image
-            Thread.Sleep(3000); 
+            string password = "eP$^6trvdsf2@2232jfkdlfs";
+            int seedPos = int.Parse(txtSeedpos.Text); // set to 20
+            int tapPosition = (int)nudTapPos.Value; // set to 11
+            ImageEncryption imageEncryption = new ImageEncryption(password);
+            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedPos, tapPosition, "");
+            ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
+            //
             stopWatch.Stop();
             // Get the elapsed time as a TimeSpan value.
             TimeSpan ts = stopWatch.Elapsed;
