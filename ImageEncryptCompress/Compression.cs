@@ -56,9 +56,9 @@ namespace ImageEncryptCompress
             HuffmanTree.BuildTree();
             // Create code for each pixel pixel
             string currentCode = "";
-            HuffmanTree.traverseTree(HuffmanTree.rootPixelR, currentCode, ref HuffmanTree.pixelCodesR, HuffmanTree.treeMapR);
-            HuffmanTree.traverseTree(HuffmanTree.rootPixelG, currentCode, ref HuffmanTree.pixelCodesG, HuffmanTree.treeMapG);
-            HuffmanTree.traverseTree(HuffmanTree.rootPixelB, currentCode, ref HuffmanTree.pixelCodesB, HuffmanTree.treeMapB);
+            HuffmanTree.traverseTree(HuffmanTree.rootPixelR, currentCode, ref HuffmanTree.pixelCodesR, ref HuffmanTree.treeMapR);
+            HuffmanTree.traverseTree(HuffmanTree.rootPixelG, currentCode, ref HuffmanTree.pixelCodesG, ref HuffmanTree.treeMapG);
+            HuffmanTree.traverseTree(HuffmanTree.rootPixelB, currentCode, ref HuffmanTree.pixelCodesB, ref HuffmanTree.treeMapB);
             // replace each pixel value with its code in the compressed image
             byte[] compressedImage = createCompressedImage(image);
             // save compressed image
@@ -95,79 +95,69 @@ namespace ImageEncryptCompress
                 for (int j = 0; j < width; j++)
                 {
                     // Initializing it with the root pixel on the Huffman tree
-                    for (int c = 0; c < 3; c++)
+                    Pixel pixel = HuffmanTree.rootPixelR;
+                    // Looping over each bit until we find a leaf node
+                    for (; bit < compressedCodes.Length - padding; bit++)
                     {
-                        if (c == 0)
+                        if (compressedCodes[bit] == '0')
                         {
-                            Pixel pixel = HuffmanTree.rootPixelR;
-                            // Looping over each bit until we find a leaf node
-                            for (; bit < compressedCodes.Length - padding; bit++)
-                            {
-                                if (compressedCodes[bit] == '0')
-                                {
-                                    pixel = HuffmanTree.treeMapR[pixel.value].Item1;
-                                }
-                                else
-                                {
-                                    pixel = HuffmanTree.treeMapR[pixel.value].Item2;
-                                }
-                                // If leaf node is found, assign the value to the image and break;
-                                if (!HuffmanTree.treeMapR.ContainsKey(pixel.value))
-                                {
-                                    recoveredImage[i, j].red = Convert.ToByte(pixel.value);
-                                    bit++;
-                                    break;
-                                }
-                            }
+                            pixel = HuffmanTree.treeMapR[pixel.value].Item1;
                         }
-                        else if (c == 1)
+                        else
                         {
-                            Pixel pixel = HuffmanTree.rootPixelG;
-                            // Looping over each bit until we find a leaf node
-                            for (; bit < compressedCodes.Length - padding; bit++)
-                            {
-                                if (compressedCodes[bit] == '0')
-                                {
-                                    pixel = HuffmanTree.treeMapG[pixel.value].Item1;
-                                }
-                                else
-                                {
-                                    pixel = HuffmanTree.treeMapG[pixel.value].Item2;
-                                }
-                                // If leaf node is found, assign the value to the image and break;
-                                if (!HuffmanTree.treeMapG.ContainsKey(pixel.value))
-                                {
-                                    recoveredImage[i, j].green = Convert.ToByte(pixel.value);
-                                    Console.WriteLine(pixel.value);
-                                    bit++;
-                                    break;
-                                }
-                            }
+                            pixel = HuffmanTree.treeMapR[pixel.value].Item2;
                         }
-                        else if (c == 2)
+                        // If leaf node is found, assign the value to the image and break;
+                        if (!HuffmanTree.treeMapR.ContainsKey(pixel.value))
                         {
-                            Pixel pixel = HuffmanTree.rootPixelB;
-                            // Looping over each bit until we find a leaf node
-                            for (; bit < compressedCodes.Length - padding; bit++)
-                            {
-                                if (compressedCodes[bit] == '0')
-                                {
-                                    pixel = HuffmanTree.treeMapB[pixel.value].Item1;
-                                }
-                                else
-                                {
-                                    pixel = HuffmanTree.treeMapB[pixel.value].Item2;
-                                }
-                                // If leaf node is found, assign the value to the image and break;
-                                if (!HuffmanTree.treeMapB.ContainsKey(pixel.value))
-                                {
-                                    recoveredImage[i, j].blue = Convert.ToByte(pixel.value);
-                                    bit++;
-                                    break;
-                                }
-                            }
+                            recoveredImage[i, j].red = Convert.ToByte(pixel.value);
+                            bit++;
+                            break;
                         }
                     }
+                    pixel = HuffmanTree.rootPixelG;
+                    // Looping over each bit until we find a leaf node
+                    for (; bit < compressedCodes.Length - padding; bit++)
+                    {
+                        if (compressedCodes[bit] == '0')
+                        {
+                            pixel = HuffmanTree.treeMapG[pixel.value].Item1;
+                        }
+                        else
+                        {
+                            pixel = HuffmanTree.treeMapG[pixel.value].Item2;
+                        }
+                        // If leaf node is found, assign the value to the image and break;
+                        if (!HuffmanTree.treeMapG.ContainsKey(pixel.value))
+                        {
+                            recoveredImage[i, j].green = Convert.ToByte(pixel.value);
+                            Console.WriteLine(pixel.value);
+                            bit++;
+                            break;
+                        }
+                    }
+                    pixel = HuffmanTree.rootPixelB;
+                    // Looping over each bit until we find a leaf node
+                    for (; bit < compressedCodes.Length - padding; bit++)
+                    {
+                        if (compressedCodes[bit] == '0')
+                        {
+                            pixel = HuffmanTree.treeMapB[pixel.value].Item1;
+                        }
+                        else
+                        {
+                            pixel = HuffmanTree.treeMapB[pixel.value].Item2;
+                        }
+                        // If leaf node is found, assign the value to the image and break;
+                        if (!HuffmanTree.treeMapB.ContainsKey(pixel.value))
+                        {
+                            recoveredImage[i, j].blue = Convert.ToByte(pixel.value);
+                            bit++;
+                            break;
+                        }
+                    }
+                        
+                    
                 }
             }
             return recoveredImage;
