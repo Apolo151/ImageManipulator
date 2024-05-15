@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -43,6 +44,15 @@ namespace ImageEncryptCompress
             ImageEncryption imageEncryption = new ImageEncryption(password);
             ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedPos, tapPosition, "");
             ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
+
+            // save ouput
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "bmp files (*.bmp)|*.bmp|All files (*.*)|*.*";
+            saveFileDialog1.RestoreDirectory = true;
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                pictureBox2.Image.Save(saveFileDialog1.FileName, ImageFormat.Bmp);
+            }
         }
 
         private void btnCompress_Click(object sender, EventArgs e)
