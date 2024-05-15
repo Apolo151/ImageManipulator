@@ -42,7 +42,7 @@ namespace ImageEncryptCompress
             int seedPos = int.Parse(txtSeedpos.Text); // set to 20
             int tapPosition = (int)nudTapPos.Value; // set to 11
             ImageEncryption imageEncryption = new ImageEncryption(password);
-            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedPos, tapPosition, "");
+            ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, 3, seedPos, tapPosition, "");
             ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
 
             // save ouput
