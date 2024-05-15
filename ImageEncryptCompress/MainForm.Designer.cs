@@ -54,6 +54,10 @@ namespace ImageEncryptCompress
             this.seedLen = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTapPos)).BeginInit();
@@ -301,30 +305,31 @@ namespace ImageEncryptCompress
             // backwardBtn
             // 
             this.backwardBtn.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.backwardBtn.Location = new System.Drawing.Point(1234, 325);
+            this.backwardBtn.Location = new System.Drawing.Point(1213, 347);
             this.backwardBtn.Margin = new System.Windows.Forms.Padding(4);
             this.backwardBtn.Name = "backwardBtn";
             this.backwardBtn.Size = new System.Drawing.Size(147, 89);
             this.backwardBtn.TabIndex = 6;
             this.backwardBtn.Text = "Backward Pass";
             this.backwardBtn.UseVisualStyleBackColor = true;
-            this.backwardBtn.Click += new System.EventHandler(this.forwardBtn_Click);
+            this.backwardBtn.Click += new System.EventHandler(this.backwardBtn_Click);
             // 
             // forwardBtn
             // 
             this.forwardBtn.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.forwardBtn.Location = new System.Drawing.Point(1234, 212);
+            this.forwardBtn.Location = new System.Drawing.Point(1213, 190);
             this.forwardBtn.Margin = new System.Windows.Forms.Padding(4);
             this.forwardBtn.Name = "forwardBtn";
             this.forwardBtn.Size = new System.Drawing.Size(147, 89);
             this.forwardBtn.TabIndex = 20;
             this.forwardBtn.Text = "Forward Pass";
             this.forwardBtn.UseVisualStyleBackColor = true;
+            this.forwardBtn.Click += new System.EventHandler(this.forwardBtn_Click);
             // 
             // breakBtn
             // 
             this.breakBtn.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.breakBtn.Location = new System.Drawing.Point(1234, 13);
+            this.breakBtn.Location = new System.Drawing.Point(1213, 13);
             this.breakBtn.Margin = new System.Windows.Forms.Padding(4);
             this.breakBtn.Name = "breakBtn";
             this.breakBtn.Size = new System.Drawing.Size(147, 89);
@@ -365,11 +370,57 @@ namespace ImageEncryptCompress
             this.label10.TabIndex = 21;
             this.label10.Text = "Break Params";
             // 
+            // textBox1
+            // 
+            this.textBox1.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.Location = new System.Drawing.Point(1306, 287);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(54, 27);
+            this.textBox1.TabIndex = 26;
+            this.textBox1.Text = "0.0";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox2.Location = new System.Drawing.Point(1306, 444);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(4);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(54, 27);
+            this.textBox2.TabIndex = 27;
+            this.textBox2.Text = "0.0";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(1219, 287);
+            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(51, 21);
+            this.label9.TabIndex = 13;
+            this.label9.Text = "Time";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.Location = new System.Drawing.Point(1219, 444);
+            this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(51, 21);
+            this.label11.TabIndex = 28;
+            this.label11.Text = "Time";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1394, 664);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.seedLen);
             this.Controls.Add(this.compressionRatioBox);
             this.Controls.Add(this.label8);
@@ -437,6 +488,10 @@ namespace ImageEncryptCompress
         private System.Windows.Forms.TextBox seedLen;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label11;
     }
 }
 
