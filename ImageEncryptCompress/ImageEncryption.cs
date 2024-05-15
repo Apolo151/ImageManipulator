@@ -10,18 +10,25 @@ namespace ImageEncryptCompress
 {
     public class ImageEncryption
     {
-        private string lfsr;
+        private string lfsrR;
+        private string lfsrG;
+        private string lfsrB;
 
-        public ImageEncryption(string password, bool convert = true)
+        //static:
+        public ImageEncryption(string password, bool convert = false)
         {
             // Initialize the LFSR with the password
             if (convert)
             { // alphanumeric
-                lfsr = GenerateLFSRSeed(password);
+                lfsrR = GenerateLFSRSeed(password);
+                lfsrG = GenerateLFSRSeed(password);
+                lfsrB = GenerateLFSRSeed(password);
             }
             else
             { //binary password
-                lfsr = password;
+                lfsrR = password;
+                lfsrG = password;
+                lfsrB = password;
             }
         }
 
@@ -57,7 +64,11 @@ namespace ImageEncryptCompress
         public RGBPixel[,] EncryptImage(RGBPixel[,] ImageMatrix, int k, int tapPosition, string new_lfsr, bool useNew = false)
         {
             if (useNew)
-                lfsr = new_lfsr;
+            {
+                lfsrR = new_lfsr;
+                lfsrG = new_lfsr;
+                lfsrB = new_lfsr;
+            }
             // Iterate through each pixel of the image
             for (int y = 0; y < ImageMatrix.GetLength(0); y++)
             {
@@ -69,9 +80,9 @@ namespace ImageEncryptCompress
                     byte blue = ImageMatrix[y, x].blue;
 
                     // Encrypt each color component using the LFSR
-                    red ^= GenerateKBits(ref lfsr, tapPosition, k);
-                    green ^= GenerateKBits(ref lfsr, tapPosition, k);
-                    blue ^= GenerateKBits(ref lfsr, tapPosition, k);
+                    red ^= GenerateKBits(ref lfsrR, tapPosition, k);
+                    green ^= GenerateKBits(ref lfsrG, tapPosition, k);
+                    blue ^= GenerateKBits(ref lfsrB, tapPosition, k);
 
                     // Update the pixel with the encrypted color
                     ImageMatrix[y, x] = new RGBPixel { red = red, green = green, blue = blue };
