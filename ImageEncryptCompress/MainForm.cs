@@ -76,6 +76,7 @@ namespace ImageEncryptCompress
             ImageEncryption imageEncryption = new ImageEncryption(password);
             ImageMatrix = imageEncryption.EncryptImage(ImageMatrix, seedPos, tapPosition, "");
             ImageOperations.DisplayImage(ImageMatrix, pictureBox2);
+            //
             // Compress Image
             float compressionRatio = Compression.CompressImage(ImageMatrix);
             compressionRatioBox.Text = Math.Round(compressionRatio, 5).ToString();
